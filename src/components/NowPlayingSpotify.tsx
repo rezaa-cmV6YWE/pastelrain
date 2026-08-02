@@ -35,7 +35,12 @@ export default function NowPlayingSpotify() {
       )}
 
       {!isLoading && !error && !data?.track && (
-        <p className="text-sm text-gray-400">Not playing anything right now.</p>
+        <div className="flex items-center gap-3 rounded-xl border border-gray-100/50 bg-white/5 p-2">
+          <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-gray-800/50">
+            <SiSpotify className="text-gray-400" />
+          </div>
+          <p className="text-sm text-gray-400">Not playing anything right now.</p>
+        </div>
       )}
 
       {data?.track && (
