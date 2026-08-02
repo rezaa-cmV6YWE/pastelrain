@@ -17,6 +17,12 @@ export const getSpotifyNowPlaying = createServerFn({ method: 'GET' }).handler(
     const clientSecret = env.SPOTIFY_CLIENT_SECRET
     const refreshToken = env.SPOTIFY_REFRESH_TOKEN
 
+    console.log('[spotify] env present:', {
+      clientId: !!clientId,
+      clientSecret: !!clientSecret,
+      refreshToken: !!refreshToken,
+    })
+
     if (!clientId || !clientSecret || !refreshToken) {
       throw new Error(
         'Spotify credentials are not configured. Set SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, and SPOTIFY_REFRESH_TOKEN in Cloudflare secrets.',
@@ -37,6 +43,7 @@ export const getSpotifyNowPlaying = createServerFn({ method: 'GET' }).handler(
 
     if (!tokenRes.ok) {
       const body = await tokenRes.text()
+      console.error('[spotify] token refresh failed:', tokenRes.status, body)
       throw new Error(
         `Failed to refresh Spotify access token: ${tokenRes.status} ${body}`,
       )
@@ -59,6 +66,7 @@ export const getSpotifyNowPlaying = createServerFn({ method: 'GET' }).handler(
 
     if (!playerRes.ok) {
       const body = await playerRes.text()
+      console.error('[spotify] player fetch failed:', playerRes.status, body)
       throw new Error(
         `Failed to fetch Spotify now playing: ${playerRes.status} ${body}`,
       )

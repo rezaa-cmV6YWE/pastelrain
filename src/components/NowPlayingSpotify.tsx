@@ -31,7 +31,9 @@ export default function NowPlayingSpotify() {
       )}
 
       {error && (
-        <p className="text-sm text-red-400">Could not load Spotify data.</p>
+        <p className="text-sm text-red-400">
+          Could not load Spotify data: {error.message}
+        </p>
       )}
 
       {!isLoading && !error && !data?.track && (
