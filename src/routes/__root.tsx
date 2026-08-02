@@ -29,11 +29,20 @@ export const Route = createRootRouteWithContext<MyRouterContext>()({
       {
         title: 'Pastel Rain',
       },
+      {
+        name: 'description',
+        content: "hi, i'm re: --- a software developer.",
+      },
     ],
     links: [
       {
         rel: 'stylesheet',
         href: appCss,
+      },
+      {
+        rel: 'icon',
+        type: 'image/svg+xml',
+        href: '/favicon.svg',
       },
     ],
   }),
