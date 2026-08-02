@@ -21,7 +21,7 @@
 }
 
 :root {
-  --rain-ink: #1e3a5f;
+  --rain-ink: #e2e8f0;
   --rain-ink-soft: #4a6b8a;
   --sky-bright: #38bdf8;
   --sky-deep: #0ea5e9;
@@ -178,17 +178,6 @@ body::after {
     linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 28px 28px;
   mask-image: radial-gradient(circle at 50% 30%, black, transparent 78%);
-}
-
-a {
-  color: var(--sky-deep);
-  text-decoration-color: rgba(14, 165, 233, 0.4);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 2px;
-}
-
-a:hover {
-  color: #0284c7;
 }
 
 code {
