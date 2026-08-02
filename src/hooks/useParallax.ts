@@ -1,4 +1,5 @@
-import { useMotionValue, useSpring, useTransform, type MotionValue } from 'motion/react'
+import { useMotionValue, useSpring, useTransform } from 'motion/react'
+import type { MotionValue } from 'motion/react'
 import { useEffect } from 'react'
 
 export function useParallax(depth: number): {

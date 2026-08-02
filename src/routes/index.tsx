@@ -1,5 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
+import NowPlayingSpotify from '@/components/NowPlayingSpotify'
 import Projects from '@/components/Projects'
 import Title from '@/components/Title'
 import WhoAmI from '@/components/WhoAmI'
@@ -13,6 +14,7 @@ function Home() {
       <div className="w-full space-y-8 rounded-3xl border border-gray-100 bg-gray-700/20 p-4 backdrop-blur-xl backdrop-filter">
         <WhoAmI />
         <Projects />
+        <NowPlayingSpotify />
       </div>
     </main>
   )
