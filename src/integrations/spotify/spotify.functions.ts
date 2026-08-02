@@ -1,4 +1,5 @@
 import { createServerFn } from '@tanstack/react-start'
+import { env } from 'cloudflare:workers'
 
 export type SpotifyNowPlaying = {
   isPlaying: boolean
@@ -12,13 +13,13 @@ export type SpotifyNowPlaying = {
 
 export const getSpotifyNowPlaying = createServerFn({ method: 'GET' }).handler(
   async (): Promise<SpotifyNowPlaying> => {
-    const clientId = process.env.SPOTIFY_CLIENT_ID
-    const clientSecret = process.env.SPOTIFY_CLIENT_SECRET
-    const refreshToken = process.env.SPOTIFY_REFRESH_TOKEN
+    const clientId = env.SPOTIFY_CLIENT_ID
+    const clientSecret = env.SPOTIFY_CLIENT_SECRET
+    const refreshToken = env.SPOTIFY_REFRESH_TOKEN
 
     if (!clientId || !clientSecret || !refreshToken) {
       throw new Error(
-        'Spotify credentials are not configured. Set SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, and SPOTIFY_REFRESH_TOKEN.',
+        'Spotify credentials are not configured. Set SPOTIFY_CLIENT_ID, SPOTIFY_CLIENT_SECRET, and SPOTIFY_REFRESH_TOKEN in Cloudflare secrets.',
       )
     }
 
@@ -41,7 +42,7 @@ export const getSpotifyNowPlaying = createServerFn({ method: 'GET' }).handler(
       )
     }
 
-    const tokenData = (await tokenRes.json()) as { access_token: string }
+    const tokenData: { access_token: string } = await tokenRes.json()
 
     const playerRes = await fetch(
       'https://api.spotify.com/v1/me/player/currently-playing',
@@ -63,7 +64,7 @@ export const getSpotifyNowPlaying = createServerFn({ method: 'GET' }).handler(
       )
     }
 
-    const playerData = (await playerRes.json()) as {
+    const playerData: {
       is_playing: boolean
       item: {
         name: string
@@ -71,7 +72,7 @@ export const getSpotifyNowPlaying = createServerFn({ method: 'GET' }).handler(
         album: { images: Array<{ url: string }> }
         external_urls: { spotify: string }
       }
-    }
+    } = await playerRes.json()
 
     return {
       isPlaying: playerData.is_playing,

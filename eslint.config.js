@@ -9,6 +9,7 @@ export default [
       'eslint.config.js',
       'prettier.config.js',
       'src/routeTree.gen.ts',
+      'worker-configuration.d.ts',
       '.cta.json',
       'dist/',
       'node_modules/',
