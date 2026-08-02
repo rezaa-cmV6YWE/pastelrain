@@ -13,18 +13,18 @@ export default function Title() {
       style={{ x: titleX, y: titleY }}
     >
       <motion.h1
-        className="font-display text-drop-teal absolute scale-110 text-5xl"
+        className="font-display text-drop-teal absolute scale-110 text-5xl md:text-7xl"
         style={{ x: tealX, y: tealY }}
       >
         パステルレイン
       </motion.h1>
       <motion.h1
-        className="font-display text-drop-coral absolute scale-105 text-5xl"
+        className="font-display text-drop-coral absolute scale-105 text-5xl md:text-7xl"
         style={{ x: coralX, y: coralY }}
       >
         パステルレイン
       </motion.h1>
-      <motion.h1 className="font-display absolute text-5xl">
+      <motion.h1 className="font-display absolute text-5xl md:text-7xl">
         パステルレイン
       </motion.h1>
     </motion.div>
