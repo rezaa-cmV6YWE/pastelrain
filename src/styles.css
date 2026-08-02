@@ -1,9 +1,23 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap");
-@import "tailwindcss";
-@plugin "@tailwindcss/typography";
+@import 'tailwindcss';
+@import '@fontsource-variable/manrope/wght.css';
+@import '@fontsource-variable/fraunces/wght.css';
+@import '@fontsource/dela-gothic-one/400.css';
+@import '@fontsource/geist-pixel/400.css';
+@plugin '@tailwindcss/typography';
 
 @theme {
-  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: 'Manrope Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-serif: 'Fraunces Variable', Georgia, serif;
+  --font-display: 'Dela Gothic One', ui-sans-serif, system-ui, sans-serif;
+  --font-pixel: 'Geist Pixel', ui-monospace, monospace;
+
+  --color-drop-crimson: var(--drop-crimson);
+  --color-drop-coral: var(--drop-coral);
+  --color-drop-orange: var(--drop-orange);
+  --color-drop-yellow: var(--drop-yellow);
+  --color-drop-teal: var(--drop-teal);
+  --color-drop-sky: var(--drop-sky);
+  --color-drop-purple: var(--drop-purple);
 }
 
 :root {
@@ -16,13 +30,16 @@
   --line: rgba(30, 58, 95, 0.14);
   --inset-glint: rgba(255, 255, 255, 0.82);
   --kicker: #2563eb;
-  --bg-base: #7dd3fc;
+  --bg-base: #a8d8f0;
   --header-bg: rgba(255, 255, 255, 0.84);
   --chip-bg: rgba(255, 255, 255, 0.8);
   --chip-line: rgba(30, 58, 95, 0.18);
   --link-bg-hover: rgba(255, 255, 255, 0.9);
-  --hero-a: rgba(56, 189, 248, 0.4);
-  --hero-b: rgba(14, 165, 233, 0.25);
+  --hero-a: rgba(178, 235, 220, 0.45);
+  --hero-b: rgba(192, 200, 240, 0.35);
+  --gradient-start: #c4f0e8;
+  --gradient-mid: #a8d8f0;
+  --gradient-end: #d0d8f8;
 
   --drop-crimson: #dc2626;
   --drop-coral: #fb7185;
@@ -33,7 +50,7 @@
   --drop-purple: #a855f7;
 }
 
-:root[data-theme="dark"] {
+:root[data-theme='dark'] {
   --rain-ink: #e2e8f0;
   --rain-ink-soft: #94a3b8;
   --sky-bright: #38bdf8;
@@ -43,13 +60,16 @@
   --line: rgba(148, 163, 184, 0.15);
   --inset-glint: rgba(148, 163, 184, 0.1);
   --kicker: #60a5fa;
-  --bg-base: #0f172a;
+  --bg-base: #1e293b;
   --header-bg: rgba(15, 23, 42, 0.8);
   --chip-bg: rgba(30, 41, 59, 0.9);
   --chip-line: rgba(148, 163, 184, 0.24);
   --link-bg-hover: rgba(30, 41, 59, 0.8);
-  --hero-a: rgba(56, 189, 248, 0.18);
-  --hero-b: rgba(96, 165, 250, 0.12);
+  --hero-a: rgba(94, 234, 212, 0.08);
+  --hero-b: rgba(165, 180, 252, 0.06);
+  --gradient-start: #1a2f35;
+  --gradient-mid: #1e3a5f;
+  --gradient-end: #2a2a4a;
 
   --drop-crimson: #f87171;
   --drop-coral: #fda4af;
@@ -61,7 +81,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root:not([data-theme='light']) {
     --rain-ink: #e2e8f0;
     --rain-ink-soft: #94a3b8;
     --sky-bright: #38bdf8;
@@ -71,13 +91,16 @@
     --line: rgba(148, 163, 184, 0.15);
     --inset-glint: rgba(148, 163, 184, 0.1);
     --kicker: #60a5fa;
-    --bg-base: #0f172a;
+    --bg-base: #1e293b;
     --header-bg: rgba(15, 23, 42, 0.8);
     --chip-bg: rgba(30, 41, 59, 0.9);
     --chip-line: rgba(148, 163, 184, 0.24);
     --link-bg-hover: rgba(30, 41, 59, 0.8);
-    --hero-a: rgba(56, 189, 248, 0.18);
-    --hero-b: rgba(96, 165, 250, 0.12);
+    --hero-a: rgba(94, 234, 212, 0.08);
+    --hero-b: rgba(165, 180, 252, 0.06);
+    --gradient-start: #1a2f35;
+    --gradient-mid: #1e3a5f;
+    --gradient-end: #2a2a4a;
 
     --drop-crimson: #f87171;
     --drop-coral: #fda4af;
@@ -105,38 +128,54 @@ body {
   font-family: var(--font-sans);
   background-color: var(--bg-base);
   background:
-    radial-gradient(1100px 620px at -8% -10%, var(--hero-a), transparent 58%),
-    radial-gradient(1050px 620px at 112% -12%, var(--hero-b), transparent 62%),
-    radial-gradient(720px 380px at 50% 115%, rgba(56, 189, 248, 0.12), transparent 68%),
-    linear-gradient(180deg, color-mix(in oklab, var(--bg-base) 70%, white) 0%, color-mix(in oklab, var(--bg-base) 90%, white) 44%, var(--bg-base) 100%);
+    radial-gradient(1200px 800px at -8% -10%, var(--hero-a), transparent 60%),
+    radial-gradient(1200px 800px at 112% 110%, var(--hero-b), transparent 60%),
+    linear-gradient(
+      160deg,
+      var(--gradient-start) 0%,
+      var(--gradient-mid) 45%,
+      var(--gradient-end) 100%
+    );
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 body::before {
-  content: "";
+  content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: -1;
-  opacity: 0.28;
+  opacity: 0.2;
   background:
-    radial-gradient(circle at 20% 15%, rgba(255, 255, 255, 0.8), transparent 34%),
-    radial-gradient(circle at 78% 26%, rgba(56, 189, 248, 0.2), transparent 42%),
-    radial-gradient(circle at 42% 82%, rgba(14, 165, 233, 0.14), transparent 36%);
+    radial-gradient(
+      circle at 20% 15%,
+      rgba(255, 255, 255, 0.4),
+      transparent 40%
+    ),
+    radial-gradient(
+      circle at 78% 82%,
+      rgba(208, 216, 248, 0.25),
+      transparent 45%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      rgba(168, 216, 240, 0.15),
+      transparent 50%
+    );
 }
 
 body::after {
-  content: "";
+  content: '';
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: -1;
-  opacity: 0.12;
+  opacity: 0.08;
   background-image:
-    linear-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+    linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
   background-size: 28px 28px;
   mask-image: radial-gradient(circle at 50% 30%, black, transparent 78%);
 }
@@ -174,10 +213,6 @@ pre code {
   margin-inline: auto;
 }
 
-.display-title {
-  font-family: "Fraunces", Georgia, serif;
-}
-
 .island-shell {
   border: 1px solid var(--line);
   background: linear-gradient(165deg, var(--surface-strong), var(--surface));
@@ -189,7 +224,11 @@ pre code {
 }
 
 .feature-card {
-  background: linear-gradient(165deg, color-mix(in oklab, var(--surface-strong) 93%, white 7%), var(--surface));
+  background: linear-gradient(
+    165deg,
+    color-mix(in oklab, var(--surface-strong) 93%, white 7%),
+    var(--surface)
+  );
   box-shadow:
     0 1px 0 var(--inset-glint) inset,
     0 18px 34px rgba(30, 58, 95, 0.1),
@@ -204,7 +243,10 @@ pre code {
 button,
 .island-shell,
 a {
-  transition: background-color 180ms ease, color 180ms ease, border-color 180ms ease,
+  transition:
+    background-color 180ms ease,
+    color 180ms ease,
+    border-color 180ms ease,
     transform 180ms ease;
 }
 
@@ -225,7 +267,7 @@ a {
 }
 
 .nav-link::after {
-  content: "";
+  content: '';
   position: absolute;
   left: 0;
   bottom: -6px;
@@ -274,7 +316,8 @@ a {
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0);
   }
   50% {

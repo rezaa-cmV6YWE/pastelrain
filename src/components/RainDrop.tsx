@@ -24,7 +24,7 @@ export function RainDrop({
       {...rest}
     >
       <path
-        d="M50 0C50 0 95 45 95 75C95 100 75 120 50 120C25 120 5 100 5 75C5 45 50 0 50 0Z"
+        d="M50 0 C60 12 91 44 91 72 C91 97 72 117 50 117 C28 117 9 97 9 72 C9 44 40 12 50 0Z"
         fill={color}
         stroke={outline}
         strokeWidth="3"

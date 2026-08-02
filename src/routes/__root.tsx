@@ -1,13 +1,16 @@
+import { TanStackDevtools } from '@tanstack/react-devtools'
 import {
+  ClientOnly,
+  createRootRouteWithContext,
   HeadContent,
   Scripts,
-  createRootRouteWithContext,
 } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
-import { TanStackDevtools } from '@tanstack/react-devtools'
-import type { QueryClient } from '@tanstack/react-query'
 
+import { RainBackground } from '@/components/RainBackground'
 import appCss from '@/styles.css?url'
+
+import type { QueryClient } from '@tanstack/react-query'
 
 interface MyRouterContext {
   queryClient: QueryClient
@@ -46,8 +49,11 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
         <HeadContent />
       </head>
-      <body className="font-sans antialiased wrap-anywhere selection:bg-[rgba(56,189,248,0.28)]">
-        {children}
+      <body className="font-sans wrap-anywhere antialiased selection:bg-[rgba(56,189,248,0.28)]">
+        <ClientOnly fallback={null}>
+          <RainBackground />
+        </ClientOnly>
+        <div className="relative z-10">{children}</div>
         <TanStackDevtools
           config={{
             position: 'bottom-right',
