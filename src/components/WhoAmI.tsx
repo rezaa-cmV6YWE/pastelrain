@@ -186,7 +186,7 @@ export default function WhoAmI() {
         <h3 className="font-pixel text-xl">Links:</h3>
         <ul className="flex flex-wrap gap-2">
           <li>
-            <IconLink href="https://github.com/rezaageng" label="GitHub">
+            <IconLink href="https://github.com/rezaa-cmV6YWE" label="GitHub">
               <SiGithub size={32} />
             </IconLink>
           </li>
