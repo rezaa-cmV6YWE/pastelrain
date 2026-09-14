@@ -1,0 +1,8 @@
+# Spotify Integration
+SPOTIFY_CLIENT_ID=
+SPOTIFY_CLIENT_SECRET=
+SPOTIFY_REFRESH_TOKEN=
+
+# Performai / SEGA Integration
+SEGA_ID=
+SEGA_PASSWORD=

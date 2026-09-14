@@ -1,6 +1,8 @@
 import { createFileRoute } from '@tanstack/react-router'
 
+import ChunithmProfile from '@/components/ChunithmProfile'
 import Footer from '@/components/Footer'
+import MaimaiProfile from '@/components/MaimaiProfile'
 import NowPlayingSpotify from '@/components/NowPlayingSpotify'
 import Projects from '@/components/Projects'
 import Title from '@/components/Title'
@@ -16,6 +18,8 @@ function Home() {
         <WhoAmI />
         <Projects />
         <NowPlayingSpotify />
+        <MaimaiProfile />
+        <ChunithmProfile />
         <Footer />
       </div>
     </main>
