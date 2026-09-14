@@ -24,6 +24,7 @@ pnpm deploy
 
 - `src/routes/` — File-based routes (`__root.tsx`, `index.tsx`, `$.tsx`).
 - `src/components/` — UI components (`Title`, `WhoAmI`, `Projects`, `NowPlayingSpotify`, `Footer`, `RainBackground`).
+- `src/integrations/performai/` — Server functions and types for fetching Maimai and Chunithm profiles and ratings with ISG caching and maintenance detection.
 - `src/integrations/spotify/` — Server function for fetching the currently playing Spotify track.
 - `src/integrations/tanstack-query/` — TanStack Query provider and devtools.
 - `src/hooks/useParallax.ts` — Mouse-driven parallax hook for the title.
