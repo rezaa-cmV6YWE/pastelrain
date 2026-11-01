@@ -18,9 +18,9 @@ import { cinematic, titleLine, titleSpot } from './title'
  * by ~0.68, just after the camera starts zooming (0.65).
  */
 const lines: readonly (readonly [string, number, number])[] = [
-  ['A summer afternoon. A railway crossing by the sea.', 0.06, 0.21],
-  ['The bells start, the barriers come down, and everything waits.', 0.22, 0.37],
-  ["I'm a software developer. I build things that carry people somewhere.", 0.38, 0.53],
+  ['Noon by the sea. The sun stands high and the road is empty.', 0.06, 0.21],
+  ['Somewhere down the line, the crossing bells begin to ring.', 0.22, 0.37],
+  ['A little local train rolls in, right on time.', 0.38, 0.53],
   ['Come aboard.', 0.54, 0.68],
 ]
 

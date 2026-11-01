@@ -71,17 +71,32 @@ export function usePointerParallax(): PointerParallax {
   return { x, y }
 }
 
+/** Deepest layer depth in the scene; the intro drop is scaled against it. */
+const maxDepth = 40
+
+/**
+ * One depth plane of the scene. `pointer` shifts it by up to `depth` px.
+ * `intro` (1 → 0) is the opening crane shot: at 1 the camera is tilted up at
+ * the sky, so every plane is pushed down, near ones further than far ones
+ * (from 25% of the layer's height at depth 0 to 100% at the deepest), and
+ * they settle at different speeds as it runs to 0.
+ */
 export function ParallaxLayer({
   pointer,
   depth,
+  intro,
   children,
 }: {
   pointer: PointerParallax
   depth: number
+  intro?: MotionValue<number>
   children: ReactNode
 }) {
   const x = useTransform(pointer.x, [-1, 1], [depth, -depth])
   const y = useTransform(pointer.y, [-1, 1], [depth * 0.4, -depth * 0.4])
+  const still = useMotionValue(0)
+  const drop = 25 + 75 * (depth / maxDepth)
+  const introY = useTransform(intro ?? still, [0, 1], ['0%', `${drop}%`])
 
   return (
     <motion.div
@@ -89,7 +104,9 @@ export function ParallaxLayer({
       className="absolute -inset-12 will-change-transform"
       style={{ x, y }}
     >
-      {children}
+      <motion.div className="absolute inset-0 will-change-transform" style={{ y: introY }}>
+        {children}
+      </motion.div>
     </motion.div>
   )
 }

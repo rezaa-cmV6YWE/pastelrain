@@ -59,9 +59,10 @@ const letter: Variants = {
 /**
  * The scene's visible heading, revealed like a film title card: letters fade
  * up from blur, centre first, while the word tracks in to its final spacing.
+ * The reveal starts when `show` turns true (after the opening camera move).
  * Screen readers get the whole word from the hidden copy.
  */
-export function Title() {
+export function Title({ show }: { show: boolean }) {
   const calm = useReducedMotion() === true
   return (
     <h1
@@ -76,7 +77,7 @@ export function Title() {
       <motion.span
         aria-hidden="true"
         initial="hidden"
-        animate="shown"
+        animate={show ? 'shown' : 'hidden'}
         variants={word}
         custom={calm}
       >

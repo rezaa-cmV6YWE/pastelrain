@@ -5,8 +5,24 @@ import { SceneSvg } from './scene-svg'
 
 /** [cx, cy, r, shaded crescent under this lobe] */
 type Lobe = readonly [number, number, number, boolean?]
-/** [x0, x1, top, bottom]; the flat base every cumulus sits on */
+/**
+ * [x0, x1, top, bottom]: the underside every cumulus rests on. It is a soft
+ * row of puffs rather than a straight cut, because the opening camera move
+ * shows clouds before the sea rises in front of their bases.
+ */
 type Base = readonly [number, number, number, number]
+
+/** Puffs along a cloud's underside: alternating heights so the edge undulates. */
+function underside([x0, x1, top, bottom]: Base): Lobe[] {
+  const r = Math.min(34, (bottom - top) / 2)
+  const count = Math.max(2, Math.round((x1 - x0) / (r * 1.6)))
+  const step = (x1 - x0 - 2 * r) / (count - 1)
+  return Array.from({ length: count }, (_, i) => [
+    x0 + r + i * step,
+    bottom - r - (i % 2 === 0 ? 0 : 7),
+    r + (i % 2 === 0 ? 0 : 3),
+  ])
+}
 
 type Drift = { drift: string; duration: string; delay: string }
 
@@ -36,32 +52,31 @@ function crescent([cx, cy, r]: Lobe) {
   return `M${sx} ${sy} A${R} ${R} 0 0 1 ${ex} ${ey} A${R * 1.5} ${R * 1.5} 0 0 0 ${sx} ${sy} Z`
 }
 
-function Cumulus({ id, lobes, base }: { id: string; lobes: readonly Lobe[]; base: Base }) {
-  const [x0, x1, top, bottom] = base
+function Cumulus({ lobes, base }: { lobes: readonly Lobe[]; base: Base }) {
+  const [x0, x1, top] = base
+  const puffs = underside(base)
+  // Body fill between the puffs and the upper lobes; stops short of the
+  // underside so only the puffs form the bottom edge.
+  const fillBottom = puffs[0][1]
   const tone = (dx: number, dy: number, dr: number) => (
     <>
-      {lobes.map(([cx, cy, r]) => (
+      {[...lobes, ...puffs].map(([cx, cy, r]) => (
         <circle key={`${cx}-${cy}`} cx={cx + dx} cy={cy + dy} r={r + dr} />
       ))}
-      <rect x={x0 + dx} y={top + dy} width={x1 - x0} height={bottom - top} />
+      <rect x={x0 + 20 + dx} y={top + dy} width={x1 - x0 - 40} height={fillBottom - top} />
     </>
   )
   return (
     <>
-      <clipPath id={`pr-cloud-${id}`}>
-        <rect width="1600" height={bottom} />
-      </clipPath>
-      <g clipPath={`url(#pr-cloud-${id})`}>
-        <g fill={palette.skyHaze}>{tone(8, 6, 0)}</g>
-        <g fill={palette.cloudShade}>{tone(0, 0, 0)}</g>
-        <g fill={palette.cloud}>{tone(3, -6, -1)}</g>
-        <g fill={palette.cloudShade}>
-          {lobes
-            .filter((lobe) => lobe[3])
-            .map((lobe) => (
-              <path key={`${lobe[0]}-${lobe[1]}`} d={crescent(lobe)} />
-            ))}
-        </g>
+      <g fill={palette.skyHaze}>{tone(8, 6, 0)}</g>
+      <g fill={palette.cloudShade}>{tone(0, 0, 0)}</g>
+      <g fill={palette.cloud}>{tone(3, -6, -1)}</g>
+      <g fill={palette.cloudShade}>
+        {lobes
+          .filter((lobe) => lobe[3])
+          .map((lobe) => (
+            <path key={`${lobe[0]}-${lobe[1]}`} d={crescent(lobe)} />
+          ))}
       </g>
     </>
   )
@@ -110,13 +125,13 @@ export function Clouds() {
   return (
     <>
       <Drifting drift="1.2%" duration="140s" delay="0s">
-        <Cumulus id="hero" lobes={hero} base={[620, 1060, 500, 565]} />
+        <Cumulus lobes={hero} base={[620, 1060, 500, 565]} />
       </Drifting>
       <Drifting drift="2.5%" duration="100s" delay="-30s">
-        <Cumulus id="right" lobes={right} base={[1380, 1600, 520, 565]} />
+        <Cumulus lobes={right} base={[1380, 1600, 520, 565]} />
       </Drifting>
       <Drifting drift="3%" duration="80s" delay="-10s">
-        <Cumulus id="left" lobes={leftBank} base={[292, 610, 520, 565]} />
+        <Cumulus lobes={leftBank} base={[292, 610, 520, 565]} />
       </Drifting>
       <Drifting drift="4%" duration="70s" delay="-45s">
         <path
@@ -128,11 +143,11 @@ export function Clouds() {
           fill={palette.cloud}
         />
         <path
-          d="M1050 558 C1080 540 1170 532 1240 538 C1262 541 1272 548 1270 558 Z"
+          d="M1050 558 C1080 540 1170 532 1240 538 C1262 541 1272 548 1270 558 C1210 567 1110 567 1050 558 Z"
           fill={palette.cloudShade}
         />
         <path
-          d="M1056 552 C1090 538 1170 532 1236 537 C1256 540 1266 546 1264 552 Z"
+          d="M1056 552 C1090 538 1170 532 1236 537 C1256 540 1266 546 1264 552 C1205 559 1115 559 1056 552 Z"
           fill={palette.cloud}
         />
       </Drifting>
