@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-`pastelrain` is a TanStack Start app (React 19, SSR) deployed to Cloudflare Workers. It was scaffolded with create-tanstack-app (`.cta.json`: file-router, Tailwind, `cloudflare` add-on, no examples). It is still close to the starter: a single `/` route that renders a centered "pastelrain" heading. `README.md` is empty, and there are no server functions, loaders, data fetching, or app state yet.
+`pastelrain` is a TanStack Start app (React 19, SSR) deployed to Cloudflare Workers. It was scaffolded with create-tanstack-app (`.cta.json`: file-router, Tailwind, `cloudflare` add-on, no examples). It is planned as a scroll-driven storytelling portfolio. The single `/` route renders the first scene, `CrossingScene`: a full-viewport, paper-cut SVG seaside railway crossing with pointer parallax. There is no scroll machinery yet. `README.md` is empty, and there are no server functions, loaders, data fetching, or app state yet.
 
 ## Architecture & Data Flow
 
@@ -20,6 +20,12 @@
 ## Key Directories
 
 - `src/routes/`: file-based routes. `__root.tsx` is the document shell and `index.tsx` is `/`.
+- `src/components/crossing-scene/`: the first scene.
+  - `palette.ts` holds every scene color; SVG fills reference `palette.*` rather than Tailwind tokens.
+  - `scene-svg.tsx`: `SceneSvg` (shared `viewBox="0 0 1600 900"`, `xMidYMax slice`), `SceneDefs` (the `#pr-cut`, `#pr-glow`, `#pr-stripe` defs that every layer references by URL), and `PaperGrain`.
+  - `parallax.tsx`: the parallax Motion hooks (`usePointerParallax`, `ParallaxLayer`). A mouse or pen moves the scene while hovering. A finger moves it while touching and springs back on release. Touch listeners are passive and use touch events rather than pointer events, so they never block scrolling.
+  - `title.tsx`: the visible `h1`, revealed like a film title card. Letters fade up out of a blur, starting from the centre, while the word's letter-spacing closes in. The Motion variants take a `calm` (prefers reduced motion) `custom` value. `hidden` is identical either way, which keeps SSR hydration-safe. With calm, the letters only fade.
+  - The layer components (`sky`, `clouds`, `sea`, `land`, `crossing`, `foreground`) use the `pr-*` animation classes from `src/styles.css`. Never use `Math.random` in scene art, because it breaks SSR hydration.
 - `src/`: `router.tsx`, `styles.css`, and the generated `routeTree.gen.ts`.
 - `.agents/skills/motion/`: Motion animation skill docs (best practices, performance audit, CSS spring, transition preview).
 - `.omp/mcp.json`: the agent MCP config (the `motion` server at `https://mcp.motion.dev`).
@@ -74,7 +80,6 @@ pnpm format:check        # oxfmt --check
   - `--font-title` (Shippori Mincho; applied to `h1`–`h6` in `@layer base`) → `font-title`.
   - `--font-sans` (Zen Kaku Gothic New).
   - `--font-mono` (JetBrains Mono Variable).
-- **Known gap:** `src/routes/index.tsx` uses `text-title`, but no `--color-title` or `--text-title` token exists, so the class has no effect.
 - **Cloudflare runtime:** `nodejs_compat`, `compatibility_date` 2025-09-02. No bindings or env vars are configured; add them in `wrangler.jsonc`. The worker name `tanstack-start-app` is still the scaffold default.
 
 ## Important Files

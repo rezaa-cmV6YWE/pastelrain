@@ -37,3 +37,66 @@ body,
 body {
   margin: 0;
 }
+
+.pr-paper {
+  filter: drop-shadow(-3px 4px 2px rgb(13 40 80 / 0.28));
+}
+
+/* HTML text cut from paper: the scene's rough-edge filter plus its shadow */
+.pr-cut-text {
+  filter: url(#pr-cut) drop-shadow(-3px 4px 2px rgb(13 40 80 / 0.28));
+}
+
+.pr-drift {
+  animation: pr-drift var(--drift-duration, 90s) ease-in-out infinite alternate;
+  animation-delay: var(--drift-delay, 0s);
+}
+
+@keyframes pr-drift {
+  from {
+    transform: translateX(calc(var(--drift) * -1));
+  }
+  to {
+    transform: translateX(var(--drift));
+  }
+}
+
+.pr-glint {
+  animation: pr-glint var(--glint-duration, 4s) ease-in-out infinite;
+  animation-delay: var(--glint-delay, 0s);
+  opacity: 0;
+}
+
+@keyframes pr-glint {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.pr-lamp-a,
+.pr-lamp-b {
+  animation: pr-blink 1s steps(1, end) infinite;
+}
+
+.pr-lamp-b {
+  animation-delay: -0.5s;
+}
+
+@keyframes pr-blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pr-drift {
+    animation: none;
+  }
+}
