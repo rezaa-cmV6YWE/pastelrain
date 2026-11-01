@@ -1,0 +1,11 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "semi": false,
+  "singleQuote": true,
+  "sortImports": true,
+  "sortTailwindcss": {
+    "stylesheet": "./src/styles.css",
+    "functions": ["cn"]
+  },
+  "ignorePatterns": [".agents/", ".omp/", "src/routeTree.gen.ts", "pnpm-lock.yaml"]
+}
