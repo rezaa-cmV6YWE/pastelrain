@@ -26,6 +26,7 @@
     "@tanstack/react-router-devtools": "1.167.2",
     "@tanstack/react-start": "1.169.4",
     "cn": "^0.5.1",
+    "lenis": "^1.3.27",
     "motion": "^14.9.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

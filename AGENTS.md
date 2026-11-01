@@ -2,20 +2,24 @@
 
 ## Project Overview
 
-`pastelrain` is a TanStack Start app (React 19, SSR) deployed to Cloudflare Workers. It was scaffolded with create-tanstack-app (`.cta.json`: file-router, Tailwind, `cloudflare` add-on, no examples). It is planned as a scroll-driven storytelling portfolio. The single `/` route renders the first scene, `CrossingScene`: a full-viewport, paper-cut SVG seaside railway crossing with pointer parallax. There is no scroll machinery yet. `README.md` is empty, and there are no server functions, loaders, data fetching, or app state yet.
+`pastelrain` is a TanStack Start app (React 19, SSR) deployed to Cloudflare Workers. It was scaffolded with create-tanstack-app (`.cta.json`: file-router, Tailwind, `cloudflare` add-on, no examples). It is planned as a scroll-driven storytelling portfolio. The single `/` route renders the first scene, `CrossingScene`: a paper-cut SVG seaside railway crossing with pointer parallax, pinned in a 500svh scroll track. Scrolling plays the transition toward the next scene, which doesn't exist yet: the title fades, narration captions play, a local train sweeps in from the right, and the camera zooms until the train fills the screen. `README.md` is empty, and there are no server functions, loaders, data fetching, or app state yet.
 
 ## Architecture & Data Flow
 
 - **Request path:** Cloudflare Worker (`wrangler.jsonc` → `main: @tanstack/react-start/server-entry`) → TanStack Start SSR → router from `src/router.tsx` → route tree in `src/routeTree.gen.ts` → route components in `src/routes/`.
 - **Root shell:** `src/routes/__root.tsx` uses `createRootRoute({ head, shellComponent: RootDocument })`.
   - `head` sets the meta tags and title, and links the CSS via `import appCss from '../styles.css?url'`.
-  - `RootDocument` renders `<html>`, `<HeadContent />`, the children, TanStack devtools (rendered unconditionally), and `<Scripts />`.
+  - `RootDocument` renders `<html>`, `<HeadContent />`, `<ReactLenis root />`, the children, TanStack devtools (rendered unconditionally), and `<Scripts />`.
 - **Router:** `src/router.tsx` exports `getRouter()`, which is the Start convention; do not rename it to `createRouter`.
   - Options: `scrollRestoration: true`, `defaultPreload: 'intent'`, `defaultPreloadStaleTime: 0`.
   - The `declare module '@tanstack/react-router' { interface Register { ... } }` block provides type-safe links. Keep it.
 - **Vite plugin order** (`vite.config.ts`), which matters: `devtools()` → `cloudflare({ viteEnvironment: { name: 'ssr' } })` → `tailwindcss()` → `tanstackStart()` → `viteReact()`. `resolve.tsconfigPaths: true` is enabled.
 - **Styling:** Tailwind v4, CSS-first (`src/styles.css`: `@import 'tailwindcss'` plus an `@theme` block). There is no `tailwind.config.*`.
 - **Animation:** the `motion` package (`motion/react`). Follow `.agents/skills/motion/` guidance.
+- **Smooth scrolling:** Lenis (`lenis`, `lenis/react`) is mounted once as `<ReactLenis root />` in `__root.tsx`, and its stylesheet is `@import`ed in `src/styles.css`.
+  - It smooths wheel and trackpad scrolling on the window. Touch keeps native scrolling.
+  - It turns itself off for `prefers-reduced-motion` (`respectReducedMotion`, on by default).
+  - Motion's `useScroll` reads the window scroll, so scroll-driven scenes follow the eased scroll automatically. Don't add a second scroll container.
 
 ## Key Directories
 
@@ -26,6 +30,10 @@
   - `parallax.tsx`: the parallax Motion hooks (`usePointerParallax`, `ParallaxLayer`). A mouse or pen moves the scene while hovering. A finger moves it while touching and springs back on release. Touch listeners are passive and use touch events rather than pointer events, so they never block scrolling.
   - `title.tsx`: the visible `h1`, revealed like a film title card. Letters fade up out of a blur, starting from the centre, while the word's letter-spacing closes in. The Motion variants take a `calm` (prefers reduced motion) `custom` value. `hidden` is identical either way, which keeps SSR hydration-safe. With calm, the letters only fade.
   - The layer components (`sky`, `clouds`, `sea`, `land`, `crossing`, `foreground`) use the `pr-*` animation classes from `src/styles.css`. Never use `Math.random` in scene art, because it breaks SSR hydration.
+  - `index.tsx` owns the scroll timeline (`useScroll` over the 500svh `<section>`, with a sticky full-screen view). The title fades out first and pointer parallax settles to zero (the zoom would magnify it). The train sweeps in from the right at 20% and keeps a steady speed to the end; it never stops. The camera zooms from 65% to 100% while the train is still moving. Every scene layer sits inside one camera `motion.div`.
+  - `camera.tsx`: `useCrossingCamera` zooms the camera exponentially, panning the focus from the crossing to the middle of the train. The final zoom is measured so the train body covers the viewport. Positions come from invisible `CameraMarks` circles, so the camera follows whatever framing CSS gives the scene, including the portrait box.
+  - `train.tsx`: the two-car local train, drawn facing left, in the same paper-cut style as the rest of the scene. It uses the `pr-paper` drop shadow, `#pr-cut` rough edges, solid-tone fills (no transparency) and a back sheet in a second tone. The cut filter sits inside the moving group, so the edge noise travels with the train. It renders between the far and near crossing fixtures through `Crossing`'s `track` slot.
+  - `narration.tsx`: the captions. Edit the `lines` array to change the story or each line's scroll window. They have no backing: they use the same paper-cut text look as the title, in navy. They are pinned to the sky: `Narration` renders inside the camera (with a box carrying the same 3rem overscan as a parallax layer), so at 1× it sits exactly in the title's spot and then zooms away with the world. Every line's window therefore ends by about 68%, just after the zoom starts. A line plays the title's reveal when its window is entered: it is time-based (not scrubbed by scroll), the letters come out of a blur from the centre, and per-letter `x` offsets imitate the title's letter-spacing closing in. It reuses `titleSpot`, `titleLine` and `cinematic` from `title.tsx`.
 - `src/`: `router.tsx`, `styles.css`, and the generated `routeTree.gen.ts`.
 - `.agents/skills/motion/`: Motion animation skill docs (best practices, performance audit, CSS spring, transition preview).
 - `.omp/mcp.json`: the agent MCP config (the `motion` server at `https://mcp.motion.dev`).

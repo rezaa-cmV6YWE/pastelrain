@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 import { palette } from './palette'
 import { SceneSvg } from './scene-svg'
 
@@ -166,7 +168,12 @@ function GateArt({ gate }: { gate: Gate }) {
   )
 }
 
-export function Crossing() {
+/**
+ * Fixtures on the far side of the track draw first, then `track` (whatever
+ * runs on the rails, e.g. the train), then the near side's, so the train
+ * passes behind the front signal and gate but in front of the back ones.
+ */
+export function Crossing({ track }: { track?: ReactNode }) {
   return (
     <>
       {/* glow of back-facing lamps, spilling around their housings */}
@@ -193,10 +200,13 @@ export function Crossing() {
           <rect x="232" y="578" width="150" height="84" fill={palette.navy} />
           <path d="M240 570 H390 L382 578 H232 Z" fill={palette.stripe} />
           <rect x="246" y="590" width="58" height="60" fill={palette.stripe} opacity={0.55} />
-
-          {/* painter's order: far side of the track first */}
           <GateArt gate={backGate} />
           <SignalArt signal={backSignal} />
+        </g>
+      </SceneSvg>
+      {track}
+      <SceneSvg>
+        <g filter="url(#pr-cut)">
           <SignalArt signal={frontSignal} />
           <GateArt gate={frontGate} />
         </g>

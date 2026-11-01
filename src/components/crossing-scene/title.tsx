@@ -1,11 +1,20 @@
+import { cn } from 'cn'
 import { motion, stagger, useReducedMotion, type Variants } from 'motion/react'
 
 import { palette } from './palette'
 
 export const title = 'Re:'
 
+/**
+ * Where the title sits, inside its parallax layer (hence `+3rem`: the layer's
+ * overscan). The narration reuses it so captions appear exactly where the
+ * title was; `titleLine` is the matching line box height.
+ */
+export const titleSpot = 'top-[calc(10svh+3rem)] portrait:top-[calc(16svh+3rem)]'
+export const titleLine = 'h-[clamp(3rem,9vw,8rem)] text-[clamp(3rem,9vw,8rem)]'
+
 /** Long, soft ease-out: fast start, slow settle, like a film title card. */
-const cinematic = [0.16, 1, 0.3, 1] as const
+export const cinematic = [0.16, 1, 0.3, 1] as const
 
 const centreOut = stagger(0.14, { from: 'center', startDelay: 0.5 })
 
@@ -56,7 +65,11 @@ export function Title() {
   const calm = useReducedMotion() === true
   return (
     <h1
-      className="pr-cut-text absolute top-[calc(10svh+3rem)] left-1/2 m-0 -translate-x-1/2 text-[clamp(3rem,9vw,8rem)] leading-none font-semibold tracking-tight whitespace-nowrap portrait:top-[calc(16svh+3rem)]"
+      className={cn(
+        'pr-cut-text absolute left-1/2 m-0 -translate-x-1/2 leading-none font-semibold tracking-tight whitespace-nowrap',
+        titleSpot,
+        titleLine,
+      )}
       style={{ color: palette.navy }}
     >
       <span className="sr-only">{title}</span>
