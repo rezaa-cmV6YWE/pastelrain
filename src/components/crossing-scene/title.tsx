@@ -1,7 +1,8 @@
 import { cn } from 'cn'
 import { motion, stagger, useReducedMotion, type Variants } from 'motion/react'
 
-import { palette } from './palette'
+import { cinematic } from '#/components/scene-kit/ease'
+import { palette } from '#/components/scene-kit/palette'
 
 export const title = 'Re:'
 
@@ -12,9 +13,6 @@ export const title = 'Re:'
  */
 export const titleSpot = 'top-[calc(10svh+3rem)] portrait:top-[calc(16svh+3rem)]'
 export const titleLine = 'h-[clamp(3rem,9vw,8rem)] text-[clamp(3rem,9vw,8rem)]'
-
-/** Long, soft ease-out: fast start, slow settle, like a film title card. */
-export const cinematic = [0.16, 1, 0.3, 1] as const
 
 const centreOut = stagger(0.14, { from: 'center', startDelay: 0.5 })
 

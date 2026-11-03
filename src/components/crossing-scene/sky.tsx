@@ -1,5 +1,5 @@
-import { palette } from './palette'
-import { SceneSvg } from './scene-svg'
+import { palette } from '#/components/scene-kit/palette'
+import { SceneSvg } from '#/components/scene-kit/scene-svg'
 
 export function Sky() {
   return (

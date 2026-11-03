@@ -9,8 +9,10 @@ import {
 } from 'motion/react'
 import { useState } from 'react'
 
-import { palette } from './palette'
-import { cinematic, titleLine, titleSpot } from './title'
+import { cinematic } from '#/components/scene-kit/ease'
+import { palette } from '#/components/scene-kit/palette'
+
+import { titleLine, titleSpot } from './title'
 
 /**
  * Narration lines and the scroll-progress window [from, to] each is shown in.
@@ -82,23 +84,35 @@ function Line({
 }) {
   const calm = useReducedMotion() === true
   const [active, setActive] = useState(false)
+  // Rendered only while shown or leaving: Safari kept drawing faded letters
+  // of filtered text as stale layers (see the title in `./index`).
+  const [present, setPresent] = useState(false)
   // useScroll measures on mount and emits a change, so a reload mid-scroll
   // still activates the right line.
-  useMotionValueEvent(progress, 'change', (p) => setActive(p >= from && p < to))
+  useMotionValueEvent(progress, 'change', (p) => {
+    const inWindow = p >= from && p < to
+    setActive(inWindow)
+    if (inWindow) setPresent(true)
+  })
 
   const count = text.replaceAll(' ', '').length
   const centre = (count - 1) / 2 || 1
   let index = 0
   return (
-    <motion.p
-      className="pr-cut-text absolute m-0 max-w-[min(90vw,38rem)] text-center font-title text-[clamp(1.05rem,2.2vw,1.5rem)] leading-snug font-semibold"
-      style={{ color: palette.navy }}
-      initial="hidden"
-      animate={active ? 'shown' : 'hidden'}
-      variants={caption}
-    >
+    <>
+      {/* outside the caption, so screen readers keep it while it isn't rendered */}
       <span className="sr-only">{text}</span>
-      <span aria-hidden="true">
+      <motion.p
+        aria-hidden="true"
+        className="pr-cut-text absolute m-0 max-w-[min(90vw,38rem)] text-center font-title text-[clamp(1.05rem,2.2vw,1.5rem)] leading-snug font-semibold"
+        style={{ color: palette.navy, display: present ? undefined : 'none' }}
+        initial="hidden"
+        animate={active ? 'shown' : 'hidden'}
+        variants={caption}
+        onAnimationComplete={(definition) => {
+          if (definition === 'hidden') setPresent(false)
+        }}
+      >
         {text.split(' ').map((word, w) => (
           // Words stay whole so wrapping only happens at spaces.
           <span key={w}>
@@ -120,8 +134,8 @@ function Line({
             </span>
           </span>
         ))}
-      </span>
-    </motion.p>
+      </motion.p>
+    </>
   )
 }
 

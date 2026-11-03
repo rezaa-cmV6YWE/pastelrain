@@ -49,19 +49,23 @@ export function SceneDefs() {
           <rect width="16" height="16" fill={palette.foam} />
           <rect width="8" height="16" fill={palette.stripe} />
         </pattern>
+        <filter id="pr-grain">
+          <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" seed="2" />
+          <feColorMatrix type="saturate" values="0" />
+        </filter>
       </defs>
     </svg>
   )
 }
 
+/**
+ * Paper texture over the whole page, rendered once (in `src/routes/index.tsx`)
+ * above both scenes, so nothing swaps grain at the hand-off.
+ */
 export function PaperGrain() {
   return (
-    <div className="pointer-events-none absolute inset-0 opacity-[0.16] mix-blend-multiply">
+    <div className="pointer-events-none fixed inset-0 z-20 opacity-[0.16] mix-blend-multiply">
       <svg className="absolute inset-0 size-full" aria-hidden="true">
-        <filter id="pr-grain">
-          <feTurbulence type="fractalNoise" baseFrequency="0.85" numOctaves="3" seed="2" />
-          <feColorMatrix type="saturate" values="0" />
-        </filter>
         <rect width="100%" height="100%" filter="url(#pr-grain)" />
       </svg>
     </div>

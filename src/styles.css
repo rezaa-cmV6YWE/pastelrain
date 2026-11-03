@@ -39,6 +39,23 @@ body {
   margin: 0;
 }
 
+/*
+ * Scrolling is held (`lenis.stop()`) during the opening camera move and the
+ * rush into the train window. Lenis holds it with `overflow: clip`, which
+ * removes a classic (always-shown) scrollbar and widens the page mid-motion.
+ * With a mouse, hold it with `overflow: hidden` in a reserved gutter instead,
+ * so the width never changes; touch devices keep Lenis's `clip`.
+ */
+@media (pointer: fine) {
+  html {
+    scrollbar-gutter: stable;
+  }
+
+  html.lenis:not(.lenis-autoToggle).lenis-stopped {
+    overflow: hidden;
+  }
+}
+
 .pr-paper {
   filter: drop-shadow(-3px 4px 2px rgb(13 40 80 / 0.28));
 }
@@ -48,9 +65,14 @@ body {
   filter: url(#pr-cut) drop-shadow(-3px 4px 2px rgb(13 40 80 / 0.28));
 }
 
+/*
+ * Scene animations. Each scene's view sets `--pr-play` to `paused` while it
+ * is hidden, so an off-screen scene does no animation work.
+ */
 .pr-drift {
   animation: pr-drift var(--drift-duration, 90s) ease-in-out infinite alternate;
   animation-delay: var(--drift-delay, 0s);
+  animation-play-state: var(--pr-play, running);
 }
 
 @keyframes pr-drift {
@@ -65,6 +87,7 @@ body {
 .pr-glint {
   animation: pr-glint var(--glint-duration, 4s) ease-in-out infinite;
   animation-delay: var(--glint-delay, 0s);
+  animation-play-state: var(--pr-play, running);
   opacity: 0;
 }
 
@@ -81,6 +104,7 @@ body {
 .pr-lamp-a,
 .pr-lamp-b {
   animation: pr-blink 1s steps(1, end) infinite;
+  animation-play-state: var(--pr-play, running);
 }
 
 .pr-lamp-b {
@@ -96,8 +120,49 @@ body {
   }
 }
 
+/* the carriage's rattle; `--rattle` (0–1) is the train's speed */
+.pr-rattle {
+  animation: pr-rattle 1.4s ease-in-out infinite;
+  animation-play-state: var(--pr-play, running);
+}
+
+@keyframes pr-rattle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(calc(1.5px * var(--rattle, 1)));
+  }
+  60% {
+    transform: translateY(calc(-0.5px * var(--rattle, 1)));
+  }
+}
+
+.pr-sway {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: pr-sway 2.4s ease-in-out infinite alternate;
+  animation-delay: var(--sway-delay, 0s);
+  animation-play-state: var(--pr-play, running);
+}
+
+@keyframes pr-sway {
+  from {
+    transform: rotate(-3deg);
+  }
+  to {
+    transform: rotate(3deg);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pr-drift {
+    animation: none;
+  }
+
+  .pr-rattle,
+  .pr-sway {
     animation: none;
   }
 }

@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react'
 
-import { palette } from './palette'
-import { SceneSvg } from './scene-svg'
+import { palette } from '#/components/scene-kit/palette'
+import { Circle, Path, Rect } from '#/components/scene-kit/rough'
+import { SceneSvg } from '#/components/scene-kit/scene-svg'
 
 const stripe = 'url(#pr-stripe)'
 
@@ -52,7 +53,7 @@ function Crossbuck({ cx, cy, w, h }: { cx: number; cy: number; w: number; h: num
   return (
     <g fill={stripe}>
       {[40, -40].map((angle) => (
-        <rect
+        <Rect
           key={angle}
           x={cx - w / 2}
           y={cy - h / 2}
@@ -72,7 +73,7 @@ function SignalArt({ signal }: { signal: Signal }) {
   const discY = base - 167 * s
   return (
     <g>
-      <rect
+      <Rect
         x={x - poleW / 2}
         y={base - 310 * s}
         width={poleW}
@@ -81,14 +82,14 @@ function SignalArt({ signal }: { signal: Signal }) {
       />
       {facing === 'front' ? (
         <>
-          <circle cx={discX} cy={discY} r={30 * s} fill={palette.stripe} />
-          <circle cx={discX} cy={discY} r={24 * s} fill={palette.foam} />
+          <Circle cx={discX} cy={discY} r={30 * s} fill={palette.stripe} />
+          <Circle cx={discX} cy={discY} r={24 * s} fill={palette.foam} />
         </>
       ) : (
         <>
           {/* bare back of the sign with its mounting bracket */}
-          <circle cx={discX} cy={discY} r={30 * s} fill={palette.cloudShade} />
-          <rect
+          <Circle cx={discX} cy={discY} r={30 * s} fill={palette.cloudShade} />
+          <Rect
             x={discX - 22 * s}
             y={discY - 3 * s}
             width={44 * s}
@@ -103,19 +104,19 @@ function SignalArt({ signal }: { signal: Signal }) {
         const armX = dir === 1 ? x + 5 * s : cx - 8 * s
         return (
           <g key={cy}>
-            <rect
+            <Rect
               x={armX}
               y={cy - 3 * s}
               width={Math.abs(cx - x) + 3 * s}
               height={6 * s}
               fill={palette.navy}
             />
-            <path
+            <Path
               d={`M${cx - visor} ${cy} A${visor} ${visor} 0 0 1 ${cx + visor} ${cy} Z`}
               fill={palette.navy}
             />
-            <circle cx={cx} cy={cy} r={housing} fill={palette.navy} />
-            {facing === 'front' && <circle cx={cx} cy={cy} r={lit} fill={palette.stripe} />}
+            <Circle cx={cx} cy={cy} r={housing} fill={palette.navy} />
+            {facing === 'front' && <Circle cx={cx} cy={cy} r={lit} fill={palette.stripe} />}
           </g>
         )
       })}
@@ -133,8 +134,8 @@ function GateArt({ gate }: { gate: Gate }) {
   const counterweight = 16 * s
   return (
     <g>
-      <rect x={x - w / 2} y={top} width={w} height={h} fill={stripe} />
-      <rect
+      <Rect x={x - w / 2} y={top} width={w} height={h} fill={stripe} />
+      <Rect
         x={x - w / 2 - 2 * s}
         y={top - 6 * s}
         width={w + 4 * s}
@@ -142,28 +143,28 @@ function GateArt({ gate }: { gate: Gate }) {
         fill={palette.navy}
       />
       {/* counterweight behind the pivot */}
-      <rect
+      <Rect
         x={dir === 1 ? x - w / 2 - counterweight : x + w / 2}
         y={hubY - 7 * s}
         width={counterweight}
         height={14 * s}
         fill={palette.navy}
       />
-      <rect
+      <Rect
         x={Math.min(x, reach)}
         y={hubY - armH / 2}
         width={Math.abs(reach - x)}
         height={armH}
         fill={stripe}
       />
-      <rect
+      <Rect
         x={Math.min(x, reach)}
         y={hubY + armH / 2}
         width={Math.abs(reach - x)}
         height={2 * s}
         fill={palette.navy}
       />
-      <circle cx={x} cy={hubY} r={8 * s} fill={palette.navy} />
+      <Circle cx={x} cy={hubY} r={8 * s} fill={palette.navy} />
     </g>
   )
 }
@@ -195,21 +196,17 @@ export function Crossing({ track }: { track?: ReactNode }) {
           ))}
       </SceneSvg>
       <SceneSvg>
-        <g filter="url(#pr-cut)">
-          {/* electrical box */}
-          <rect x="232" y="578" width="150" height="84" fill={palette.navy} />
-          <path d="M240 570 H390 L382 578 H232 Z" fill={palette.stripe} />
-          <rect x="246" y="590" width="58" height="60" fill={palette.stripe} opacity={0.55} />
-          <GateArt gate={backGate} />
-          <SignalArt signal={backSignal} />
-        </g>
+        {/* electrical box */}
+        <Rect x="232" y="578" width="150" height="84" fill={palette.navy} />
+        <Path d="M240 570 H390 L382 578 H232 Z" fill={palette.stripe} />
+        <Rect x="246" y="590" width="58" height="60" fill={palette.stripe} opacity={0.55} />
+        <GateArt gate={backGate} />
+        <SignalArt signal={backSignal} />
       </SceneSvg>
       {track}
       <SceneSvg>
-        <g filter="url(#pr-cut)">
-          <SignalArt signal={frontSignal} />
-          <GateArt gate={frontGate} />
-        </g>
+        <SignalArt signal={frontSignal} />
+        <GateArt gate={frontGate} />
       </SceneSvg>
       {/* lit faces of front-facing lamps */}
       <SceneSvg paper={false}>

@@ -79,17 +79,29 @@ const maxDepth = 40
  * `intro` (1 → 0) is the opening crane shot: at 1 the camera is tilted up at
  * the sky, so every plane is pushed down, near ones further than far ones
  * (from 25% of the layer's height at depth 0 to 100% at the deepest), and
- * they settle at different speeds as it runs to 0.
+ * they settle at different speeds as it runs to 0. `visibility` can stop a
+ * plane being drawn while something else covers it: each plane is a
+ * full-screen GPU layer, and drawing covered ones still costs tile memory.
+ *
+ * No `will-change: transform`. Chromium keeps a will-change layer drawn at the
+ * largest scale it has been zoomed to, and never lowers it: after the cameras
+ * zoom in (the crossing's zoom, the rush into the window) and back out, every
+ * plane stayed drawn at ~3× its size, so the page held ~8× the tile memory
+ * (over the GPU budget on a large window, where whole parts of the scene,
+ * like the gates, went undrawn and flickered) and scrolling up ran at half
+ * speed. The planes stay on their own layers without it.
  */
 export function ParallaxLayer({
   pointer,
   depth,
   intro,
+  visibility,
   children,
 }: {
   pointer: PointerParallax
   depth: number
   intro?: MotionValue<number>
+  visibility?: MotionValue<'visible' | 'hidden'>
   children: ReactNode
 }) {
   const x = useTransform(pointer.x, [-1, 1], [depth, -depth])
@@ -99,12 +111,8 @@ export function ParallaxLayer({
   const introY = useTransform(intro ?? still, [0, 1], ['0%', `${drop}%`])
 
   return (
-    <motion.div
-      data-depth={depth}
-      className="absolute -inset-12 will-change-transform"
-      style={{ x, y }}
-    >
-      <motion.div className="absolute inset-0 will-change-transform" style={{ y: introY }}>
+    <motion.div data-depth={depth} className="absolute -inset-12" style={{ x, y, visibility }}>
+      <motion.div className="absolute inset-0" style={{ y: introY }}>
         {children}
       </motion.div>
     </motion.div>

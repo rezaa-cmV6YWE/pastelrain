@@ -1,7 +1,8 @@
 import type { CSSProperties } from 'react'
 
-import { palette } from './palette'
-import { SceneSvg } from './scene-svg'
+import { palette } from '#/components/scene-kit/palette'
+import { Path, Rect } from '#/components/scene-kit/rough'
+import { SceneSvg } from '#/components/scene-kit/scene-svg'
 
 /** [left x, base y, width] of each wave-crest crescent */
 const crests: readonly (readonly [number, number, number])[] = [
@@ -45,25 +46,20 @@ export function Sea() {
   return (
     <>
       <SceneSvg>
-        <g filter="url(#pr-cut)">
-          <rect y="560" width="1600" height="160" fill={palette.sea} />
-          <rect y="560" width="1600" height="7" fill={palette.seaDeep} />
-          <path
-            d="M0 574 H1600 V598 Q1540 606 1480 598 T1360 598 T1240 598 T1120 598 T1000 598 T880 598 T760 598 T640 598 T520 598 T400 598 T280 598 T160 598 T40 598 T-80 598 V574 Z"
-            fill={palette.seaBright}
-          />
-          <path
-            d="M1100 645 C1150 628 1230 622 1320 628 S1500 620 1600 624 V645 Z"
-            fill={palette.seaDeep}
-          />
-          <g fill={palette.foam}>
-            {crests.map(([x, y, w]) => (
-              <path
-                key={x}
-                d={`M${x} ${y} a${w / 2} 14 0 0 1 ${w} 0 a${w / 2} 6 0 0 0 ${-w} 0 Z`}
-              />
-            ))}
-          </g>
+        <Rect y="560" width="1600" height="160" fill={palette.sea} />
+        <Rect y="560" width="1600" height="7" fill={palette.seaDeep} />
+        <Path
+          d="M0 574 H1600 V598 Q1540 606 1480 598 T1360 598 T1240 598 T1120 598 T1000 598 T880 598 T760 598 T640 598 T520 598 T400 598 T280 598 T160 598 T40 598 T-80 598 V574 Z"
+          fill={palette.seaBright}
+        />
+        <Path
+          d="M1100 645 C1150 628 1230 622 1320 628 S1500 620 1600 624 V645 Z"
+          fill={palette.seaDeep}
+        />
+        <g fill={palette.foam}>
+          {crests.map(([x, y, w]) => (
+            <Path key={x} d={`M${x} ${y} a${w / 2} 14 0 0 1 ${w} 0 a${w / 2} 6 0 0 0 ${-w} 0 Z`} />
+          ))}
         </g>
       </SceneSvg>
       <SceneSvg paper={false}>

@@ -1,6 +1,8 @@
+import { palette } from '#/components/scene-kit/palette'
+import { Path, Rect } from '#/components/scene-kit/rough'
+import { SceneSvg } from '#/components/scene-kit/scene-svg'
+
 import { gates, pillarSize, poleWidth, signals } from './crossing'
-import { palette } from './palette'
-import { SceneSvg } from './scene-svg'
 
 /** A post's cast shadow: its foot skewed toward the lower left (light from the upper right). */
 function footShadow(x: number, base: number, w: number, s: number) {
@@ -14,41 +16,39 @@ function footShadow(x: number, base: number, w: number, s: number) {
 export function Ground() {
   return (
     <SceneSvg>
-      <g filter="url(#pr-cut)">
-        <rect y="662" width="1600" height="238" fill={palette.road} />
-        <path d="M600 640 H940 L1600 900 H0 Z" fill={palette.road} />
+      <Rect y="662" width="1600" height="238" fill={palette.road} />
+      <Path d="M600 640 H940 L1600 900 H0 Z" fill={palette.road} />
 
-        <g fill={palette.grass}>
-          <path d="M0 652 L130 655 L260 650 L400 657 L520 652 L598 658 L585 680 L560 705 L530 732 L480 756 L400 782 L300 806 L210 818 L110 830 L0 834 Z" />
-          <path d="M1000 660 L1120 658 L1260 662 L1400 668 L1520 663 L1600 666 V802 L1480 796 L1350 800 L1290 772 L1200 738 L1100 700 L1025 672 Z" />
-        </g>
-        <g fill={palette.grassShade}>
-          <path d="M40 700 L140 694 L220 704 L180 716 L70 714 Z" />
-          <path d="M1380 744 L1490 738 L1600 744 V766 L1460 766 Z" />
-          <path d="M1180 680 L1260 676 L1300 690 L1220 694 Z" />
-        </g>
-
-        <g fill={palette.navy}>
-          {/* rails run past both viewBox edges, behind the guardrails */}
-          <rect x="-20" y="683" width="1640" height="6" />
-          <rect x="-20" y="695" width="1640" height="5" />
-          {/* shadows fall to the lower left */}
-          <path d="M232 662 H382 L370 672 H220 Z" />
-          {signals.map(({ x, base, scale }) => (
-            <path key={`signal-${x}`} d={footShadow(x, base, poleWidth * scale, scale)} />
-          ))}
-          {gates.map(({ x, base, scale }) => (
-            <path key={`gate-${x}`} d={footShadow(x, base, pillarSize.w * scale, scale)} />
-          ))}
-        </g>
-
-        {/* cast shadow from something behind the viewer, tinting grass and road alike */}
-        <path
-          d="M0 765 L120 761 L260 767 L400 763 L520 771 L640 785 L700 807 L690 900 H0 Z"
-          fill={palette.castShadow}
-          style={{ mixBlendMode: 'multiply' }}
-        />
+      <g fill={palette.grass}>
+        <Path d="M0 652 L130 655 L260 650 L400 657 L520 652 L598 658 L585 680 L560 705 L530 732 L480 756 L400 782 L300 806 L210 818 L110 830 L0 834 Z" />
+        <Path d="M1000 660 L1120 658 L1260 662 L1400 668 L1520 663 L1600 666 V802 L1480 796 L1350 800 L1290 772 L1200 738 L1100 700 L1025 672 Z" />
       </g>
+      <g fill={palette.grassShade}>
+        <Path d="M40 700 L140 694 L220 704 L180 716 L70 714 Z" />
+        <Path d="M1380 744 L1490 738 L1600 744 V766 L1460 766 Z" />
+        <Path d="M1180 680 L1260 676 L1300 690 L1220 694 Z" />
+      </g>
+
+      <g fill={palette.navy}>
+        {/* rails run past both viewBox edges, behind the guardrails */}
+        <Rect x="-20" y="683" width="1640" height="6" />
+        <Rect x="-20" y="695" width="1640" height="5" />
+        {/* shadows fall to the lower left */}
+        <Path d="M232 662 H382 L370 672 H220 Z" />
+        {signals.map(({ x, base, scale }) => (
+          <Path key={`signal-${x}`} d={footShadow(x, base, poleWidth * scale, scale)} />
+        ))}
+        {gates.map(({ x, base, scale }) => (
+          <Path key={`gate-${x}`} d={footShadow(x, base, pillarSize.w * scale, scale)} />
+        ))}
+      </g>
+
+      {/* cast shadow from something behind the viewer, tinting grass and road alike */}
+      <Path
+        d="M0 765 L120 761 L260 767 L400 763 L520 771 L640 785 L700 807 L690 900 H0 Z"
+        fill={palette.castShadow}
+        style={{ mixBlendMode: 'multiply' }}
+      />
     </SceneSvg>
   )
 }
@@ -61,11 +61,11 @@ function Guardrail({ from, to, posts }: { from: number; to: number; posts: reado
   return (
     <>
       <g fill={palette.navy}>
-        <path
+        <Path
           d={`M${from} ${rail.bottom + 10} H${to} L${to - 8} ${rail.bottom + 22} H${from - 8} Z`}
         />
         {posts.map((x) => (
-          <path
+          <Path
             key={x}
             d={`M${x} ${rail.foot} H${x + 12} L${x + 2} ${rail.foot + 12} H${x - 10} Z`}
           />
@@ -73,12 +73,12 @@ function Guardrail({ from, to, posts }: { from: number; to: number; posts: reado
       </g>
       <g fill={palette.foam}>
         {posts.map((x) => (
-          <rect key={x} x={x} y={rail.bottom} width="12" height={rail.foot - rail.bottom} />
+          <Rect key={x} x={x} y={rail.bottom} width="12" height={rail.foot - rail.bottom} />
         ))}
-        <rect x={from} y={rail.top} width={width} height={rail.bottom - rail.top} />
+        <Rect x={from} y={rail.top} width={width} height={rail.bottom - rail.top} />
       </g>
-      <rect x={from} y={rail.bottom} width={width} height="6" fill={palette.grassShade} />
-      <rect x={from} y={rail.top + 15} width={width} height="4" fill={palette.road} />
+      <Rect x={from} y={rail.bottom} width={width} height="6" fill={palette.grassShade} />
+      <Rect x={from} y={rail.top + 15} width={width} height="4" fill={palette.road} />
     </>
   )
 }
@@ -91,10 +91,8 @@ function Guardrail({ from, to, posts }: { from: number; to: number; posts: reado
 export function Foreground() {
   return (
     <SceneSvg>
-      <g filter="url(#pr-cut)">
-        <Guardrail from={-20} to={385} posts={[30, 160, 310]} />
-        <Guardrail from={1175} to={1640} posts={[1230, 1380, 1530]} />
-      </g>
+      <Guardrail from={-20} to={385} posts={[30, 160, 310]} />
+      <Guardrail from={1175} to={1640} posts={[1230, 1380, 1530]} />
     </SceneSvg>
   )
 }

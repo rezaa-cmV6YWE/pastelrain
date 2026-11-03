@@ -1,7 +1,8 @@
 import type { CSSProperties, ReactNode } from 'react'
 
-import { palette } from './palette'
-import { SceneSvg } from './scene-svg'
+import { palette } from '#/components/scene-kit/palette'
+import { Circle, Path, Rect } from '#/components/scene-kit/rough'
+import { SceneSvg } from '#/components/scene-kit/scene-svg'
 
 /** [cx, cy, r, shaded crescent under this lobe] */
 type Lobe = readonly [number, number, number, boolean?]
@@ -34,9 +35,7 @@ function Drifting({ drift, duration, delay, children }: Drift & { children: Reac
   } as CSSProperties
   return (
     <div className="pr-drift absolute inset-0" style={style}>
-      <SceneSvg>
-        <g filter="url(#pr-cut)">{children}</g>
-      </SceneSvg>
+      <SceneSvg>{children}</SceneSvg>
     </div>
   )
 }
@@ -61,9 +60,9 @@ function Cumulus({ lobes, base }: { lobes: readonly Lobe[]; base: Base }) {
   const tone = (dx: number, dy: number, dr: number) => (
     <>
       {[...lobes, ...puffs].map(([cx, cy, r]) => (
-        <circle key={`${cx}-${cy}`} cx={cx + dx} cy={cy + dy} r={r + dr} />
+        <Circle key={`${cx}-${cy}`} cx={cx + dx} cy={cy + dy} r={r + dr} />
       ))}
-      <rect x={x0 + 20 + dx} y={top + dy} width={x1 - x0 - 40} height={fillBottom - top} />
+      <Rect x={x0 + 20 + dx} y={top + dy} width={x1 - x0 - 40} height={fillBottom - top} />
     </>
   )
   return (
@@ -75,7 +74,7 @@ function Cumulus({ lobes, base }: { lobes: readonly Lobe[]; base: Base }) {
         {lobes
           .filter((lobe) => lobe[3])
           .map((lobe) => (
-            <path key={`${lobe[0]}-${lobe[1]}`} d={crescent(lobe)} />
+            <Path key={`${lobe[0]}-${lobe[1]}`} d={crescent(lobe)} />
           ))}
       </g>
     </>
@@ -134,19 +133,19 @@ export function Clouds() {
         <Cumulus lobes={leftBank} base={[292, 610, 520, 565]} />
       </Drifting>
       <Drifting drift="4%" duration="70s" delay="-45s">
-        <path
+        <Path
           d="M1390 446 C1410 432 1470 428 1500 436 C1490 444 1440 448 1390 446 Z"
           fill={palette.cloudShade}
         />
-        <path
+        <Path
           d="M1394 442 C1414 431 1468 428 1496 434 C1480 440 1440 443 1394 442 Z"
           fill={palette.cloud}
         />
-        <path
+        <Path
           d="M1050 558 C1080 540 1170 532 1240 538 C1262 541 1272 548 1270 558 C1210 567 1110 567 1050 558 Z"
           fill={palette.cloudShade}
         />
-        <path
+        <Path
           d="M1056 552 C1090 538 1170 532 1236 537 C1256 540 1266 546 1264 552 C1205 559 1115 559 1056 552 Z"
           fill={palette.cloud}
         />
