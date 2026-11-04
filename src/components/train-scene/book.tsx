@@ -55,7 +55,7 @@ const pageText =
 const ink = { color: palette.navy }
 
 /** A sheet of paper: the rough-cut background is a sibling, so the text is never filtered. */
-function Sheet({ className, children }: { className?: string; children: ReactNode }) {
+function Sheet({ className, children }: { className?: string; children?: ReactNode }) {
   return (
     <div className={cn('absolute', className)}>
       <div
@@ -167,8 +167,9 @@ function Leaf({
         {front}
       </motion.div>
       {back && (
+        // pre-flipped, so it faces the viewer once the leaf has turned over
         <motion.div
-          className="absolute inset-0 backface-hidden transform-3d"
+          className="absolute inset-0 rotate-y-180 backface-hidden"
           style={{ opacity: backShown }}
         >
           {back}
@@ -184,9 +185,12 @@ function Leaf({
  * one spread per scroll step introduces Rezaa, then it closes and lowers.
  * Landscape shows two-page spreads (chapter on the cover's back, prose on the
  * right); portrait is too narrow for two pages, so it shows the same pages
- * one at a time, turning between the chapter page and the prose page of each
- * spread. Page turns follow the scroll, like the cover: scrolling back turns
- * a page back. Decorative: the same text is in the scene's screen-reader copy.
+ * one at a time on the right page, turning between the chapter page and the
+ * prose page of each spread. As it opens it slides right so the left page
+ * (the cover's back and the backs of turned pages, blank paper) shows at the
+ * screen's left edge. Page turns follow the scroll, like the cover: scrolling
+ * back turns a page back. Decorative: the same text is in the scene's
+ * screen-reader copy.
  */
 export function Book({ progress }: { progress: MotionValue<number> }) {
   const calm = useReducedMotion() === true
@@ -239,8 +243,14 @@ export function Book({ progress }: { progress: MotionValue<number> }) {
       className="absolute inset-x-12 bottom-12 flex justify-center"
       style={{ y: rise }}
     >
+      {/*
+       * Landscape: the closed book is centred, so it slides left by half its
+       * width (one page) while opening. Portrait: it opens to the right of
+       * centre, so the right page ends near the screen's right edge and the
+       * left page shows at the left; at most by a page, on wide tablets.
+       */}
       <motion.div
-        className="relative aspect-[1.5] w-[min(90vw,1240px,140svh)] perspective-[1800px] portrait:aspect-[0.6] portrait:w-[min(92vw,480px,64svh)] landscape:[translate:calc(-25%*(1-var(--open)))_0] [@media(max-height:500px)]:w-[min(90vw,170svh)]"
+        className="portrait:[translate:calc(min(48vw-50%,50%)*var(--open))_0]` (tailwindcss suggestCanonicalClasses) relative aspect-[1.5] w-[min(90vw,1240px,140svh)] perspective-[1800px] portrait:aspect-[0.6] portrait:w-[min(78vw,480px,64svh)] landscape:[translate:calc(-25%*(1-var(--open)))_0] [@media(max-height:500px)]:w-[min(90vw,170svh)]"
         style={{ '--open': open } as MotionStyle}
       >
         {/* page stack */}
@@ -256,12 +266,13 @@ export function Book({ progress }: { progress: MotionValue<number> }) {
             <SinglePage slot={next} />
           </div>
         </Sheet>
+        {/* the spine: between the pages, at the hinge (the right page's left edge in portrait) */}
         <div
-          className="absolute inset-y-0 left-1/2 w-0.75 -translate-x-1/2 portrait:hidden"
+          className="absolute inset-y-0 left-1/2 w-0.75 -translate-x-1/2 portrait:left-0"
           style={{ backgroundColor: palette.paperShade }}
         />
 
-        {/* the cover; its back is the spread's left page (landscape only) */}
+        {/* the cover; its back is the spread's left page (blank in portrait) */}
         <Leaf
           angle={coverAngle}
           layer={coverLayer}
@@ -281,8 +292,10 @@ export function Book({ progress }: { progress: MotionValue<number> }) {
             </>
           }
           back={
-            <Sheet className="inset-0 portrait:invisible">
-              <LeftPage page={spread} />
+            <Sheet className="inset-0">
+              <div className="h-full portrait:hidden">
+                <LeftPage page={spread} />
+              </div>
             </Sheet>
           }
         />
@@ -296,6 +309,8 @@ export function Book({ progress }: { progress: MotionValue<number> }) {
               <SinglePage slot={slot} />
             </Sheet>
           }
+          // turned over, a page lands blank on the left
+          back={<Sheet className="inset-0" />}
         />
         <Leaf
           angle={spreadAngle}

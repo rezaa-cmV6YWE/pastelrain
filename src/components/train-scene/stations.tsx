@@ -4,28 +4,29 @@ import { palette } from '#/components/scene-kit/palette'
 import { SceneSvg } from '#/components/scene-kit/scene-svg'
 
 /**
- * The stops on the way: past work, shown as Japanese station name boards.
+ * The stops on the way: past work, newest first, shown as Japanese station
+ * name boards. `code` is the stop's number along the line, in that order.
  * `run` is the scene's station-run offset (viewBox units) at which this
  * stop's sign is centred in the middle window.
  */
 export const stops = [
   {
     code: '01',
-    kana: 'アルカマヤ',
-    name: 'PT. Arkamaya',
-    role: 'Intern',
-    dates: 'Oct 2019 – Jan 2020',
-    prev: ['はじまり', 'Start'],
-    next: ['ダブラースタジオ', 'Doubler Studio'],
-    run: 1400,
-  },
-  {
-    code: '02',
     kana: 'ダブラースタジオ',
     name: 'Doubler Studio',
     role: 'Frontend Developer',
     dates: 'Dec 2023 – Present',
-    prev: ['アルカマヤ', 'PT. Arkamaya'],
+    prev: ['はじまり', 'Start'],
+    next: ['アルカマヤ', 'PT. Arkamaya'],
+    run: 1400,
+  },
+  {
+    code: '02',
+    kana: 'アルカマヤ',
+    name: 'PT. Arkamaya',
+    role: 'Intern',
+    dates: 'Oct 2019 – Jan 2020',
+    prev: ['ダブラースタジオ', 'Doubler Studio'],
     next: ['つぎは…', 'Next stop'],
     run: 2800,
   },
