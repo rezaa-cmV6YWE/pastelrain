@@ -21,6 +21,23 @@ export type Shot = {
 type Measure = { from: Point; to: Point; unit: number; vw: number; vh: number }
 
 /**
+ * The `pr-paper` shadow's blur (`--pr-paper-blur`) for a view whose cameras
+ * move with `moving` (each 0 → 1): 0px while any of them is part-way, else
+ * 2px. A zooming layer has no `will-change` (see `ParallaxLayer`), so it is
+ * redrawn at every new scale, and the shadow's blur made each redraw cost a
+ * frame or more at 2× DPR (the crossing's zoom ran at ~37 fps, the gate's at
+ * ~43); unblurred, the same shadow costs next to nothing, and mid-move its
+ * hard edge isn't seen. Every value is read before testing: function-form
+ * useTransform only follows what it read.
+ */
+export function usePaperBlur(...moving: MotionValue<number>[]) {
+  return useTransform(() => {
+    const values = moving.map((m) => m.get())
+    return values.some((v) => v > 0 && v < 1) ? '0px' : '2px'
+  })
+}
+
+/**
  * Invisible viewBox points used to find where the shot's start and end focus
  * land on screen. Render inside the scene wrapper, in a box with the same
  * overscan as the parallax layers but no parallax of its own.

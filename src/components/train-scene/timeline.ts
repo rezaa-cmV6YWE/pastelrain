@@ -31,12 +31,29 @@ const zoomAt = [lowerAt[1] - 0.25, lowerAt[1] + 1.05]
 const stopAt = [zoomAt[1] - 0.5, zoomAt[1]]
 /**
  * After the zoom, scroll drives the train past the stations at one steady
- * speed: no stops, so each sign slides through the window and on. It ends
- * with the last sign centred.
+ * speed: no stops, so each sign slides through the window and on. The run
+ * goes on past the last sign (`runOn` screens of open sea), then the
+ * platform pulls in (`pullIn`) with the scenery outside still passing: it
+ * takes over at the run's speed and brakes with its name board in the
+ * window. Meanwhile the light goes on from golden hour to dusk.
  */
-const runAt = [zoomAt[1], zoomAt[1] + stops[stops.length - 1].run / runPerScreen]
-const total = runAt[1]
-const goldenAt = [0.65, total - 0.65]
+const runOn = 1
+/** The screen where the last sign is centred. */
+const signAt = zoomAt[1] + stops[stops.length - 1].run / runPerScreen
+/**
+ * Long enough that the pull-in, starting at the run's speed, only ever
+ * slows down (`pullIn` in `index.tsx`) on every screen shape.
+ */
+const pullInScreens = 4
+const pullInAt = [signAt + runOn, signAt + runOn + pullInScreens]
+const runAt = [zoomAt[1], pullInAt[0]]
+/** The station run's end, where the pull-in takes over. */
+export const runEnd = (runAt[1] - runAt[0]) * runPerScreen
+// the train stands still briefly before the rush plays at the end
+const total = pullInAt[1] + 0.3
+const goldenAt = [0.65, signAt]
+/** The sun sets as the platform comes into view. */
+const duskAt = [signAt + 0.2, pullInAt[0] + 0.9]
 
 const at = (screens: number) => screens / total
 const span = ([start, end]: number[]) => [at(start), at(end)]
@@ -58,7 +75,11 @@ export const bookLower = span(lowerAt)
 export const zoomSpan = span(zoomAt)
 /** The train slows from cruising to a stop, ready for the stations. */
 export const cruiseStop = span(stopAt)
-/** The station run, from 0 to the last stop's `run`. */
+/** The station run, from 0 to `runEnd`; the pull-in starts where it ends, at the same speed. */
 export const stationRun = span(runAt)
+/** The platform rolls into the windows and brakes (`pullIn` 0 → 1). */
+export const pullInSpan = span(pullInAt)
 /** Noon to golden hour. */
 export const goldenSpan = span(goldenAt)
+/** Golden hour to dusk: starts after `goldenSpan` ends, so the two never overlap. */
+export const duskSpan = span(duskAt)

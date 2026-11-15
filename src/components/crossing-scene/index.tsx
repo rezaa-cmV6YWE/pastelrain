@@ -12,7 +12,7 @@ import {
 } from 'motion/react'
 import { useEffect, useRef, useState } from 'react'
 
-import { CameraMarks, useSceneCamera, type Shot } from '#/components/scene-kit/camera'
+import { CameraMarks, useSceneCamera, usePaperBlur, type Shot } from '#/components/scene-kit/camera'
 import { glareFade } from '#/components/scene-kit/handoff'
 import { palette } from '#/components/scene-kit/palette'
 import { ParallaxLayer, usePointerParallax } from '#/components/scene-kit/parallax'
@@ -115,6 +115,8 @@ export function CrossingScene({ handoff }: { handoff: MotionValue<number> }) {
   // the hidden crossing's CSS animations pause (`--pr-play`).
   const visibility = useTransform(() => (handoff.get() >= 1 ? 'hidden' : 'visible'))
   const play = useTransform(() => (handoff.get() >= 1 ? 'paused' : 'running'))
+  // hard paper shadows while the zoom or the rush moves the camera
+  const paperBlur = usePaperBlur(zoom, handoff)
   // During the rush the stopped train's body fills the screen (the zoom
   // covers it with margin), so the planes around it can't be seen; not
   // drawing them saves GPU tile memory while both scenes are on screen.
@@ -175,7 +177,14 @@ export function CrossingScene({ handoff }: { handoff: MotionValue<number> }) {
         <motion.div
           ref={view}
           className="fixed top-0 h-svh w-full overflow-hidden"
-          style={{ backgroundColor: backdrop, visibility, '--pr-play': play } as MotionStyle}
+          style={
+            {
+              backgroundColor: backdrop,
+              visibility,
+              '--pr-play': play,
+              '--pr-paper-blur': paperBlur,
+            } as MotionStyle
+          }
         >
           {/* the rush into the window, around everything that zooms or fades */}
           <motion.div

@@ -1,5 +1,4 @@
-import type { CSSProperties, ReactNode } from 'react'
-
+import { Drifting } from '#/components/scene-kit/drifting'
 import { palette } from '#/components/scene-kit/palette'
 import { Circle, Path, Rect } from '#/components/scene-kit/rough'
 import { SceneSvg } from '#/components/scene-kit/scene-svg'
@@ -23,21 +22,6 @@ function underside([x0, x1, top, bottom]: Base): Lobe[] {
     bottom - r - (i % 2 === 0 ? 0 : 7),
     r + (i % 2 === 0 ? 0 : 3),
   ])
-}
-
-type Drift = { drift: string; duration: string; delay: string }
-
-function Drifting({ drift, duration, delay, children }: Drift & { children: ReactNode }) {
-  const style = {
-    '--drift': drift,
-    '--drift-duration': duration,
-    '--drift-delay': delay,
-  } as CSSProperties
-  return (
-    <div className="pr-drift absolute inset-0" style={style}>
-      <SceneSvg>{children}</SceneSvg>
-    </div>
-  )
 }
 
 function crescent([cx, cy, r]: Lobe) {
@@ -124,31 +108,39 @@ export function Clouds() {
   return (
     <>
       <Drifting drift="1.2%" duration="140s" delay="0s">
-        <Cumulus lobes={hero} base={[620, 1060, 500, 565]} />
+        <SceneSvg>
+          <Cumulus lobes={hero} base={[620, 1060, 500, 565]} />
+        </SceneSvg>
       </Drifting>
       <Drifting drift="2.5%" duration="100s" delay="-30s">
-        <Cumulus lobes={right} base={[1380, 1600, 520, 565]} />
+        <SceneSvg>
+          <Cumulus lobes={right} base={[1380, 1600, 520, 565]} />
+        </SceneSvg>
       </Drifting>
       <Drifting drift="3%" duration="80s" delay="-10s">
-        <Cumulus lobes={leftBank} base={[292, 610, 520, 565]} />
+        <SceneSvg>
+          <Cumulus lobes={leftBank} base={[292, 610, 520, 565]} />
+        </SceneSvg>
       </Drifting>
       <Drifting drift="4%" duration="70s" delay="-45s">
-        <Path
-          d="M1390 446 C1410 432 1470 428 1500 436 C1490 444 1440 448 1390 446 Z"
-          fill={palette.cloudShade}
-        />
-        <Path
-          d="M1394 442 C1414 431 1468 428 1496 434 C1480 440 1440 443 1394 442 Z"
-          fill={palette.cloud}
-        />
-        <Path
-          d="M1050 558 C1080 540 1170 532 1240 538 C1262 541 1272 548 1270 558 C1210 567 1110 567 1050 558 Z"
-          fill={palette.cloudShade}
-        />
-        <Path
-          d="M1056 552 C1090 538 1170 532 1236 537 C1256 540 1266 546 1264 552 C1205 559 1115 559 1056 552 Z"
-          fill={palette.cloud}
-        />
+        <SceneSvg>
+          <Path
+            d="M1390 446 C1410 432 1470 428 1500 436 C1490 444 1440 448 1390 446 Z"
+            fill={palette.cloudShade}
+          />
+          <Path
+            d="M1394 442 C1414 431 1468 428 1496 434 C1480 440 1440 443 1394 442 Z"
+            fill={palette.cloud}
+          />
+          <Path
+            d="M1050 558 C1080 540 1170 532 1240 538 C1262 541 1272 548 1270 558 C1210 567 1110 567 1050 558 Z"
+            fill={palette.cloudShade}
+          />
+          <Path
+            d="M1056 552 C1090 538 1170 532 1236 537 C1256 540 1266 546 1264 552 C1205 559 1115 559 1056 552 Z"
+            fill={palette.cloud}
+          />
+        </SceneSvg>
       </Drifting>
     </>
   )

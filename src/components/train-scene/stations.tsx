@@ -27,7 +27,7 @@ export const stops = [
     role: 'Intern',
     dates: 'Oct 2019 – Jan 2020',
     prev: ['ダブラースタジオ', 'Doubler Studio'],
-    next: ['つぎは…', 'Next stop'],
+    next: ['いま', 'Today'],
     run: 2800,
   },
 ] as const

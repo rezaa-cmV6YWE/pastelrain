@@ -11,7 +11,7 @@ import {
 import { useState, type ReactNode } from 'react'
 
 import { palette } from '#/components/scene-kit/palette'
-import { Circle, Path } from '#/components/scene-kit/rough'
+import { SeaVignette } from '#/components/scene-kit/vignette'
 
 import { pages, paragraphText } from './story'
 import {
@@ -119,11 +119,7 @@ function LeftPage({ page }: { page: number }) {
       <div className="flex flex-1 flex-col items-center justify-center gap-[0.6em] text-center">
         <p className="m-0 text-[3em] leading-none font-semibold">{numeral}</p>
         <p className="m-0 text-[1.4em] font-semibold">{chapter}</p>
-        <svg viewBox="0 0 120 80" className="mt-[0.6em] h-[5em] w-[7.5em]">
-          <Circle cx={60} cy={30} r={18} fill={palette.sun} />
-          <Path d="M0 50 C20 42 40 58 60 50 S100 42 120 50 V80 H0 Z" fill={palette.sea} />
-          <Path d="M0 62 C20 56 40 68 60 62 S100 56 120 62 V80 H0 Z" fill={palette.seaBright} />
-        </svg>
+        <SeaVignette className="mt-[0.6em] h-[5em] w-[7.5em]" />
       </div>
     </div>
   )

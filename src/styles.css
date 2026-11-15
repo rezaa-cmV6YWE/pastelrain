@@ -56,8 +56,14 @@ body {
   }
 }
 
+/*
+ * The paper's drop shadow. Its blur is `--pr-paper-blur` (2px), which a view
+ * sets to 0 while its camera zooms (`usePaperBlur` in
+ * `scene-kit/camera.tsx`): a zooming layer is redrawn at every new scale,
+ * and the blur made each redraw cost more than a frame.
+ */
 .pr-paper {
-  filter: drop-shadow(-3px 4px 2px rgb(13 40 80 / 0.28));
+  filter: drop-shadow(-3px 4px var(--pr-paper-blur, 2px) rgb(13 40 80 / 0.28));
 }
 
 /* HTML text cut from paper: the scene's rough-edge filter plus its shadow */
@@ -156,13 +162,55 @@ body {
   }
 }
 
+/* a platform lamp's failing tube */
+.pr-flicker {
+  animation: pr-flicker 5s steps(1, end) infinite;
+  animation-play-state: var(--pr-play, running);
+}
+
+@keyframes pr-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  62% {
+    opacity: 0.55;
+  }
+  64% {
+    opacity: 1;
+  }
+  66% {
+    opacity: 0.4;
+  }
+  69% {
+    opacity: 1;
+  }
+}
+
+/* the vending machine's backlight */
+.pr-hum {
+  animation: pr-hum 3.2s ease-in-out infinite alternate;
+  animation-play-state: var(--pr-play, running);
+}
+
+@keyframes pr-hum {
+  from {
+    opacity: 0.75;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pr-drift {
     animation: none;
   }
 
   .pr-rattle,
-  .pr-sway {
+  .pr-sway,
+  .pr-flicker,
+  .pr-hum {
     animation: none;
   }
 }

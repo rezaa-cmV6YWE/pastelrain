@@ -52,7 +52,7 @@ function CloudTile({ ox, daylight }: { ox: number; daylight: Daylight }) {
     all.flat().map(([cx, cy, r]) => <circle key={`${cx}-${cy}`} cx={cx + dx} cy={cy + dy} r={r} />)
   return (
     <>
-      <motion.g style={{ fill: daylight.skyHaze }}>{circles(5, 4)}</motion.g>
+      <motion.g style={{ fill: daylight.cloudBack }}>{circles(5, 4)}</motion.g>
       <motion.g style={{ fill: daylight.cloud }}>{circles(0, 0)}</motion.g>
       <motion.g style={{ fill: daylight.cloudShade }}>
         {all.flatMap((cloud) =>
@@ -65,11 +65,32 @@ function CloudTile({ ox, daylight }: { ox: number; daylight: Daylight }) {
   )
 }
 
-/** Sky, sun, slow clouds and the sea: the far plane, barely moving. */
+/**
+ * Sky, sun, slow clouds and the sea: the far plane, barely moving. At dusk
+ * the sky turns into the platform scene's gradient (same stops, horizon at
+ * 470) and the sun sets on the horizon in front of the haze.
+ */
 export function OutsideFar({ daylight, x }: { daylight: Daylight; x: MotionValue<number> }) {
   return (
     <SceneSvg paper={false}>
-      <motion.rect width={1600} height={900} style={{ fill: daylight.sky }} />
+      <linearGradient
+        id="pr-train-sky"
+        gradientUnits="userSpaceOnUse"
+        x1={0}
+        y1={0}
+        x2={0}
+        y2={470}
+      >
+        <motion.stop offset={0} style={{ stopColor: daylight.skyTop }} />
+        <motion.stop offset={0.2} style={{ stopColor: daylight.skyTop }} />
+        <motion.stop offset={0.7} style={{ stopColor: daylight.skyMid }} />
+        <motion.stop offset={1} style={{ stopColor: daylight.skyHorizon }} />
+      </linearGradient>
+      <rect width={1600} height={900} fill="url(#pr-train-sky)" />
+      <motion.path
+        d="M0 400 C300 392 600 404 900 398 S1400 392 1600 400 V470 H0 Z"
+        style={{ fill: daylight.skyHaze }}
+      />
       <motion.circle
         cx={1180}
         cy={daylight.sunY}
@@ -78,10 +99,6 @@ export function OutsideFar({ daylight, x }: { daylight: Daylight; x: MotionValue
         style={{ fill: daylight.sun }}
       />
       <motion.circle cx={1180} cy={daylight.sunY} r={46} style={{ fill: daylight.sun }} />
-      <motion.path
-        d="M0 400 C300 392 600 404 900 398 S1400 392 1600 400 V470 H0 Z"
-        style={{ fill: daylight.skyHaze }}
-      />
       <motion.g style={{ x }}>
         {tiles.map((ox) => (
           <CloudTile key={ox} ox={ox} daylight={daylight} />
@@ -96,8 +113,8 @@ export function OutsideFar({ daylight, x }: { daylight: Daylight; x: MotionValue
 
 const shore = 'M0 546 C200 540 400 552 600 546 S1000 540 1200 548 S1500 552 1600 546 V600 H0 Z'
 
-/** The shoreline and telephone poles rushing past just outside. */
-export function OutsideNear({ x }: { x: MotionValue<number> }) {
+/** The shoreline and telephone poles rushing past just outside; the shore dims to sand at dusk. */
+export function OutsideNear({ daylight, x }: { daylight: Daylight; x: MotionValue<number> }) {
   return (
     <SceneSvg paper={false}>
       {/* wires look the same while moving, so they stay put */}
@@ -107,7 +124,7 @@ export function OutsideNear({ x }: { x: MotionValue<number> }) {
         {tiles.map((ox) => (
           <g key={ox} transform={`translate(${ox} 0)`}>
             <path d={shore} transform="translate(3 4)" fill={palette.navy} />
-            <path d={shore} fill={palette.grassShade} />
+            <motion.path d={shore} style={{ fill: daylight.shore }} />
             {[300, 1100].map((px) => (
               <g key={px} fill={palette.navy}>
                 <rect x={px - 6} y={230} width={12} height={370} />

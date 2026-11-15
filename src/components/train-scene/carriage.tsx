@@ -14,6 +14,8 @@ export const windows = [
 const windowTop = 230
 const windowBottom = 560
 const windowRadius = 18
+/** The top of the transom bar across each window. */
+const transom = 292
 
 /** A closed rounded-rectangle subpath, for evenodd cut-outs. */
 function roundedRect(x: number, y: number, w: number, h: number, r: number) {
@@ -132,7 +134,7 @@ export function Carriage() {
             )} ${holes[i]}`}
             fillRule="evenodd"
           />
-          <Rect x={x0} y={292} width={x1 - x0} height={10} />
+          <Rect x={x0} y={transom} width={x1 - x0} height={10} />
         </g>
       ))}
 
@@ -226,6 +228,19 @@ export function Carriage() {
           <Rect key={x} x={x + 18} y={122} width={12} height={658} />
         ))}
       </g>
+      {/*
+       * The arrival rush's target (`TrainScene`): the centre opening below the
+       * transom, so once it covers the screen the straps, the transom and the
+       * sill are out of frame.
+       */}
+      <rect
+        data-rush-target
+        x={windows[1][0]}
+        y={transom + 10}
+        width={windows[1][1] - windows[1][0]}
+        height={windowBottom - transom - 10}
+        fill="none"
+      />
     </SceneSvg>
   )
 }

@@ -1,5 +1,5 @@
 import { cn } from 'cn'
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 
 import { palette } from './palette'
 
@@ -13,6 +13,42 @@ export function SceneSvg({ children, paper = true }: { children: ReactNode; pape
     >
       {children}
     </svg>
+  )
+}
+
+/**
+ * HTML laid over a `SceneSvg`, in its viewBox units: the inner box is the
+ * 1600×900 stage with the same bottom-centred cover mapping as
+ * `xMidYMax slice`. `--u` is one viewBox unit in CSS px, for sizes
+ * (`calc(var(--u) * 14)`). It clips with `overflow: clip`, not `hidden`: a
+ * hidden box is still scrollable, and focusing a control in it scrolled it,
+ * sliding the HTML off the art.
+ */
+export function SceneHtml({ children, className }: { children: ReactNode; className?: string }) {
+  const width = 'max(100cqw, calc(100cqh * 16 / 9))'
+  return (
+    <div
+      className={cn(
+        '[container-type:size] pointer-events-none absolute inset-0 overflow-clip',
+        className,
+      )}
+    >
+      <div
+        style={
+          {
+            position: 'absolute',
+            left: '50%',
+            bottom: 0,
+            translate: '-50% 0',
+            aspectRatio: '16 / 9',
+            width,
+            '--u': `calc(${width} / 1600)`,
+          } as CSSProperties
+        }
+      >
+        {children}
+      </div>
+    </div>
   )
 }
 
