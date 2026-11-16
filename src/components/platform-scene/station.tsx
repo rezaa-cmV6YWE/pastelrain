@@ -1,6 +1,6 @@
 import { palette } from '#/components/scene-kit/palette'
 import { Circle, Path, Rect } from '#/components/scene-kit/rough'
-import { stops } from '#/components/train-scene/stations'
+import { platformStop } from '#/components/train-scene/stations'
 
 import { gateX, nameX, opening, wallEnd, wallFoot, wallStart } from './layout'
 import { Strip, StripSvg, type Walk } from './strip'
@@ -30,11 +30,11 @@ const joints = Array.from({ length: Math.ceil(width / 300) }, (_, i) => 300 * i)
 /** Ceiling lamps: either side of the name board, and the exit's. */
 const lamps = [nameX - 330, nameX + 330, gateX]
 
-const lastStop = stops[stops.length - 1].name
+const [nameKana, name] = platformStop
 
 /**
  * The station wall facing the camera, the length of the platform: the
- * roof's eave, the station-name board (this stop is "Today"), the lamps, and
+ * roof's eave, the station-name board (this stop is `platformStop`), the lamps, and
  * at the far end the opening to the ticket gate under its exit sign. The
  * lamps' light is a separate, unfiltered SVG clipped to the wall; the exit's
  * lamp flickers.
@@ -105,15 +105,15 @@ export function StationWall({ walk }: { walk: Walk }) {
           </g>
           <Rect x={nameX - 130} y={240} width={260} height={132} fill={palette.foam} />
           <text x={nameX} y={300} fontSize={48} fontWeight={700} fill={palette.navy}>
-            いま
+            {nameKana}
           </text>
           <text x={nameX} y={326} fontSize={18} fontWeight={500} fill={palette.navy}>
-            Today
+            {name}
           </text>
           <Rect x={nameX - 130} y={340} width={260} height={22} fill={palette.lineGreen} />
           <g fontSize={12} fontWeight={700} fill={palette.foam}>
             <text x={nameX - 122} y={355} textAnchor="start">
-              ◂ {lastStop}
+              ◂ おもいで Memories
             </text>
             <text x={nameX + 122} y={355} textAnchor="end">
               うみ The beach ▸

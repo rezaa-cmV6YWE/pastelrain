@@ -13,10 +13,10 @@ import { titleLine, titleSpot } from './title'
  * by ~0.68, just after the camera starts zooming (0.65).
  */
 const lines: readonly (readonly [string, number, number])[] = [
-  ['Noon by the sea. The sun stands high and the road is empty.', 0.06, 0.21],
+  ['Noon by the sea. The road is empty, and the summer is almost over.', 0.06, 0.21],
   ['Somewhere down the line, the crossing bells begin to ring.', 0.22, 0.37],
-  ['A little local train rolls in, right on time.', 0.38, 0.53],
-  ['Come aboard.', 0.54, 0.68],
+  ['The little local train rolls in on time, the way it always has.', 0.38, 0.53],
+  ['Come aboard. It never waits for long.', 0.54, 0.68],
 ]
 
 /**

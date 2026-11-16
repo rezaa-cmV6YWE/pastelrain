@@ -4,6 +4,12 @@ import { palette } from '#/components/scene-kit/palette'
 import { SceneSvg } from '#/components/scene-kit/scene-svg'
 
 /**
+ * The platform the train arrives at (the platform scene's name board), as
+ * kana and English: 夕凪, the evening calm when the sea wind dies down.
+ */
+export const platformStop = ['ゆうなぎ', 'Yunagi'] as const
+
+/**
  * The stops on the way: past work, newest first, shown as Japanese station
  * name boards. `code` is the stop's number along the line, in that order.
  * `run` is the scene's station-run offset (viewBox units) at which this
@@ -27,7 +33,7 @@ export const stops = [
     role: 'Intern',
     dates: 'Oct 2019 – Jan 2020',
     prev: ['ダブラースタジオ', 'Doubler Studio'],
-    next: ['いま', 'Today'],
+    next: platformStop,
     run: 2800,
   },
 ] as const

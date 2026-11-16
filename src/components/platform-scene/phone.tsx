@@ -11,6 +11,7 @@ import { useEffect, useId, useRef, useState, type CSSProperties } from 'react'
 
 import { palette } from '#/components/scene-kit/palette'
 import { SeaVignette } from '#/components/scene-kit/vignette'
+import { platformStop } from '#/components/train-scene/stations'
 
 import { ProjectPage, push } from './project-page'
 import { projects, type Project } from './projects'
@@ -284,7 +285,7 @@ export function Phone({
                   Projects
                 </p>
                 <p className="m-0 font-sans text-[length:calc(var(--p)*12)] opacity-80">
-                  いま · Today
+                  {platformStop.join(' · ')}
                 </p>
               </div>
               <div ref={viewport} className="relative min-h-0 flex-1 overflow-clip">
