@@ -29,7 +29,7 @@ export function SceneHtml({ children, className }: { children: ReactNode; classN
   return (
     <div
       className={cn(
-        '[container-type:size] pointer-events-none absolute inset-0 overflow-clip',
+        '@container-size pointer-events-none absolute inset-0 overflow-clip',
         className,
       )}
     >

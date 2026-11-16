@@ -85,6 +85,9 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t
  * scaled by an outer transform (the crossing's rush into the window):
  * measurements are taken in its own untransformed space, so a resize while
  * it is transformed still re-measures correctly.
+ *
+ * `progress` may go above 1 to zoom past the cover shot, about `to`, kept at
+ * the screen centre.
  */
 export function useSceneCamera(
   progress: MotionValue<number>,
@@ -109,7 +112,7 @@ export function useSceneCamera(
       : Infinity
     const zMax = Math.max(1, Math.min(cover, keep))
     const z = zMax ** p
-    const t = zMax === 1 ? 0 : (z - 1) / (zMax - 1)
+    const t = zMax === 1 ? 0 : Math.min(1, (z - 1) / (zMax - 1))
     const focus = { x: lerp(m.from.x, m.to.x, t), y: lerp(m.from.y, m.to.y, t) }
     const target = { x: lerp(m.from.x, m.vw / 2, t), y: lerp(m.from.y, m.vh / 2, t) }
     return { z, x: target.x - z * focus.x, y: target.y - z * focus.y }

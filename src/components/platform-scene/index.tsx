@@ -2,13 +2,22 @@ import { useLenis } from 'lenis/react'
 import {
   motion,
   MotionConfig,
+  useMotionValueEvent,
   useScroll,
   useTransform,
   type MotionStyle,
   type MotionValue,
 } from 'motion/react'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 
+import { Fireworks } from '#/components/beach-scene/fireworks'
+import { Dunes, Headland, Shore } from '#/components/beach-scene/shore'
+import {
+  beyondGate,
+  fireworksStart,
+  pullBackSpan,
+  throughSpan,
+} from '#/components/beach-scene/timeline'
 import { CameraMarks, useSceneCamera, usePaperBlur, type Shot } from '#/components/scene-kit/camera'
 import { skyReveal } from '#/components/scene-kit/handoff'
 import { palette } from '#/components/scene-kit/palette'
@@ -46,19 +55,34 @@ const gateShot: Shot = {
  * train's on the way (`skyReveal`). Here you pull out a phone whose feed of
  * project cards (`./projects`) scrolls with the page, put it away, and walk
  * to the ticket gate; the camera then goes through the gate as its paddles
- * open, ending on the dusk sea. Timings: `./timeline`; positions: `./layout`.
+ * open, ending on the dusk sea. Past the gate the camera pushes on into the
+ * sea and pulls back onto the beach at night (`shore`, the beach scene's
+ * scroll), with the platform's layers giving way to the beach's. Timings:
+ * `./timeline` and `beach-scene/timeline`; positions: `./layout`.
  */
 export function PlatformScene({
   pullIn,
   arrival,
+  shore,
 }: {
   pullIn: MotionValue<number>
   arrival: MotionValue<number>
+  shore: MotionValue<number>
 }) {
   const track = useRef<HTMLElement>(null)
   const view = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ target: track, offset: ['start start', 'end end'] })
-  const zoom = useTransform(scrollYProgress, gateZoom, [0, 1])
+  const gate = useTransform(scrollYProgress, gateZoom, [0, 1])
+  // Past the gate: on into the sea, then back out to 1× over the beach.
+  const beyond = useTransform(
+    shore,
+    [throughSpan[0], throughSpan[1], pullBackSpan[1]],
+    [0, beyondGate, -1],
+  )
+  const zoom = useTransform(() => {
+    const [g, b] = [gate.get(), beyond.get()]
+    return Math.max(0, g + b)
+  })
   const camera = useSceneCamera(zoom, view, gateShot)
   const distance = usePullInDistance()
   const walk: Walk = {
@@ -70,7 +94,12 @@ export function PlatformScene({
       const [rolled, s, d] = [pullIn.get(), scrollYProgress.get(), distance.get()]
       return d * (1 - rolled) + walkAt(s)
     }),
-    willChange: useTransform(zoom, (z) => (z > 0 ? 'auto' : 'transform')),
+    // `auto` from the gate zoom on, through the beach: a will-change layer
+    // zoomed stays drawn at its largest scale.
+    willChange: useTransform(() => {
+      const [g, s] = [gate.get(), shore.get()]
+      return g > 0 || s > 0 ? 'auto' : 'transform'
+    }),
   }
   const open = useTransform(scrollYProgress, gateOpen, [0, 1])
 
@@ -86,8 +115,26 @@ export function PlatformScene({
   // sits beneath the train scene.
   const visibility = useTransform(pullIn, (v) => (v > 0 ? 'visible' : 'hidden'))
   const play = useTransform(pullIn, (v) => (v > 0 ? 'running' : 'paused'))
-  // hard paper shadows while the gate zoom moves the camera
-  const paperBlur = usePaperBlur(zoom)
+  // hard paper shadows while the gate zoom or the beach's push and pull-back move the camera
+  const paperBlur = usePaperBlur(
+    gate,
+    useTransform(shore, [throughSpan[0], pullBackSpan[1]], [0, 1]),
+  )
+  // the beach: dusk turns to night as the camera pulls back
+  const night = useTransform(shore, pullBackSpan, [0, 1])
+  // At the push's deepest, only sky and sea fill the frame: there the
+  // platform's planes give way to the beach's, unseen.
+  const onBeach = useTransform(shore, (s): 'visible' | 'hidden' =>
+    s >= throughSpan[1] ? 'visible' : 'hidden',
+  )
+  const onPlatform = useTransform(shore, (s): 'visible' | 'hidden' =>
+    s >= throughSpan[1] ? 'hidden' : 'visible',
+  )
+  // The fireworks are time-based: mounted once lit, so they start with the
+  // first rocket. `shore` is set on mount by the beach scene (after this
+  // subscribes), so a restored scroll lights them too.
+  const [lit, setLit] = useState(false)
+  useMotionValueEvent(shore, 'change', (v) => setLit(v >= fireworksStart))
   // Until the arrival, the sky and sea are the train scene's outside, seen
   // beneath this view; this scene's own sky takes over during the rush,
   // while the carriage hides most of it, and the backdrop once it's done.
@@ -142,17 +189,29 @@ export function PlatformScene({
           >
             <motion.div className="absolute inset-0" style={{ opacity: skyOpacity }}>
               <ParallaxLayer pointer={p} depth={3} visibility={skyShown}>
-                <DuskSky walk={walk} />
+                <DuskSky walk={walk} night={night} />
               </ParallaxLayer>
             </motion.div>
-            <ParallaxLayer pointer={p} depth={10}>
+            <ParallaxLayer pointer={p} depth={5} visibility={onBeach}>
+              <Headland />
+            </ParallaxLayer>
+            <ParallaxLayer pointer={p} depth={6} visibility={onBeach}>
+              {lit && <Fireworks />}
+            </ParallaxLayer>
+            <ParallaxLayer pointer={p} depth={10} visibility={onPlatform}>
               <StationWall walk={walk} />
             </ParallaxLayer>
-            <ParallaxLayer pointer={p} depth={18}>
+            <ParallaxLayer pointer={p} depth={18} visibility={onPlatform}>
               <PlatformFloor walk={walk} open={open} />
             </ParallaxLayer>
-            <ParallaxLayer pointer={p} depth={30}>
+            <ParallaxLayer pointer={p} depth={30} visibility={onPlatform}>
               <PlatformForeground walk={walk} />
+            </ParallaxLayer>
+            <ParallaxLayer pointer={p} depth={18} visibility={onBeach}>
+              <Shore night={night} />
+            </ParallaxLayer>
+            <ParallaxLayer pointer={p} depth={30} visibility={onBeach}>
+              <Dunes />
             </ParallaxLayer>
             <CameraMarks shot={gateShot} marks={camera.marks} />
           </motion.div>

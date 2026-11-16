@@ -79,4 +79,19 @@ export const palette = {
   flyerBlue: '#dcecf7',
   flyerPink: '#f8dfe0',
   flyerYellow: '#fbf0c8',
+  /** night: the beach */
+  nightSkyTop: '#0a0f2c',
+  nightSkyMid: '#1b2150',
+  nightHorizon: '#3b3a6c',
+  nightSea: '#141c44',
+  nightSand: '#3a3350',
+  nightGrass: '#435068',
+  /** laid over the sand at an opacity: the wet sand's and the dunes' shade */
+  nightShade: '#140f22',
+  nightRock: '#1a1830',
+  nightRockLight: '#2f2c4c',
+  nightDriftwood: '#4d4060',
+  /** the far headland on the horizon: its hazy back ridge and its nearer front */
+  nightHeadlandFar: '#2a2e5a',
+  nightHeadland: '#1e2149',
 } as const

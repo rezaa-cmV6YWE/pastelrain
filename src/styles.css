@@ -202,6 +202,109 @@ body {
   }
 }
 
+/* the beach's foam washing in and out */
+.pr-wash {
+  animation: pr-wash 5s ease-in-out infinite alternate;
+  animation-play-state: var(--pr-play, running);
+}
+
+@keyframes pr-wash {
+  from {
+    transform: translateX(-18px);
+    opacity: 0.45;
+  }
+  to {
+    transform: translateX(18px);
+    opacity: 0.8;
+  }
+}
+
+/* fireworks: a rocket rises to the burst, the burst opens and droops as it fades */
+.pr-rocket,
+.pr-burst,
+.pr-flash {
+  animation-duration: var(--burst-duration, 4.8s);
+  animation-delay: var(--burst-delay, 0s);
+  animation-iteration-count: infinite;
+  animation-fill-mode: backwards;
+  animation-play-state: var(--pr-play, running);
+}
+
+.pr-rocket {
+  animation-name: pr-rocket;
+}
+
+@keyframes pr-rocket {
+  0% {
+    transform: translateY(var(--rise));
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1);
+  }
+  2% {
+    opacity: 1;
+  }
+  18% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  20%,
+  100% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+}
+
+.pr-burst {
+  animation-name: pr-burst;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes pr-burst {
+  0%,
+  18% {
+    transform: scale(0.1);
+    opacity: 0;
+  }
+  19% {
+    transform: scale(0.2);
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  55% {
+    transform: scale(1.03) translateY(4px);
+    opacity: 1;
+  }
+  80%,
+  100% {
+    transform: scale(1.08) translateY(14px);
+    opacity: 0;
+  }
+}
+
+.pr-flash {
+  animation-name: pr-flash;
+  opacity: 0;
+}
+
+@keyframes pr-flash {
+  0%,
+  18% {
+    opacity: 0;
+  }
+  22% {
+    opacity: 0.55;
+  }
+  60%,
+  100% {
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pr-drift {
     animation: none;
@@ -212,5 +315,23 @@ body {
   .pr-flicker,
   .pr-hum {
     animation: none;
+  }
+
+  .pr-wash {
+    animation: none;
+  }
+
+  .pr-rocket {
+    display: none;
+  }
+
+  .pr-burst {
+    animation: none;
+    opacity: 1;
+  }
+
+  .pr-flash {
+    animation: none;
+    opacity: 0.3;
   }
 }
