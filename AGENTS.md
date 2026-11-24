@@ -9,7 +9,7 @@
 3. `PlatformScene`: a station platform at dusk, seen first-person facing the station wall, in a track whose height follows from its timeline (and the number of projects). It arrives facing the station-name board; you pull out a phone, and page scroll drives its feed of project cards (picture, kind · year, title, summary, stack, links; "More" pushes the project's page, with the full description, inside the phone like an app screen). The phone goes away, and a walk sideways along the platform ends at the ticket gate, which the camera goes through as its paddles open, ending on the dusk sea.
 4. `BeachScene`: the same shot goes on, with no cut. The camera pushes past the gate into the sea, then pulls back as dusk turns to night, revealing the beach. Paper fireworks go off over the sea, a melancholy closing line ("The fireworks always end too soon." / "Thank you for staying until the last one.") is revealed in the centre of the sky like the opening title, and the contacts fade in at the bottom-right: "Say hello" over a row of logo links. The beach is drawn in the platform scene's view and camera (the same `DuskSky`); `BeachScene` owns the scroll track, the closing line, the contacts and `shore`, its scroll progress.
 
-`README.md` is empty, and there are no server functions, loaders, data fetching, or app state yet.
+`README.md` is the human-facing overview: the story, the stack, setup, scripts, layout, where content lives, and commits/releases; keep it in step when those change. There are no server functions, loaders, data fetching, or app state yet.
 
 ## Architecture & Data Flow
 
@@ -94,13 +94,13 @@ pnpm preview             # preview the production build
 pnpm run deploy          # build + wrangler deploy
 pnpm generate-routes     # tsr generate → src/routeTree.gen.ts
 pnpm exec tsc --noEmit   # typecheck (there is no script for it)
-pnpm exec oxlint         # lint (see the warning below)
-pnpm exec oxlint --fix
+pnpm exec oxlint         # lint (= pnpm lint; see the warning below)
+pnpm exec oxlint --fix   # = pnpm lint:fix
 pnpm format              # oxfmt (writes)
 pnpm format:check        # oxfmt --check
 ```
 
-**Warning:** under pnpm 11.21, `pnpm lint` and `pnpm run lint` fail with `Command "eslint" not found`. Call `pnpm exec oxlint` directly.
+**Warning:** in the agent shell, the rtk command proxy rewrites `pnpm lint` and `pnpm run lint` to its own lint, which only supports ESLint, so they fail with `Command "eslint" not found`. The scripts themselves are fine. Call `pnpm exec oxlint` directly.
 
 ## Code Conventions & Common Patterns
 
