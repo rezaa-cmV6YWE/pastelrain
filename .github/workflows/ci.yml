@@ -63,10 +63,6 @@ jobs:
     needs: [check, commitlint]
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      issues: write
-      pull-requests: write
     steps:
       - uses: actions/checkout@v7
         with:
@@ -78,6 +74,8 @@ jobs:
           node-version-file: .node-version
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # A PAT of a repository admin: main's ruleset lets only its bypass list
+      # (Repository admin) push, and GITHUB_TOKEN can't be put on that list.
       - run: pnpm exec semantic-release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
