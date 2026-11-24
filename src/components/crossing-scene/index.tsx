@@ -5,7 +5,6 @@ import {
   MotionConfig,
   useMotionValue,
   useReducedMotion,
-  useScroll,
   useTransform,
   type MotionStyle,
   type MotionValue,
@@ -16,6 +15,7 @@ import { CameraMarks, useSceneCamera, usePaperBlur, type Shot } from '#/componen
 import { glareFade } from '#/components/scene-kit/handoff'
 import { palette } from '#/components/scene-kit/palette'
 import { ParallaxLayer, usePointerParallax } from '#/components/scene-kit/parallax'
+import { useTrackProgress } from '#/components/scene-kit/track'
 
 import { Clouds } from './clouds'
 import { Crossing } from './crossing'
@@ -36,6 +36,8 @@ import { useWindowRush } from './window-rush'
  * train body fills the screen. Reaching the end plays the rush into that
  * window (`./window-rush`).
  */
+/** The section's height in screens: its scroll distance plus the pinned screen. */
+const trackScreens = 5
 const titleFadeEnd = 0.08
 const trainEnter = 0.2
 const brakeAt = 0.72
@@ -79,7 +81,7 @@ export function CrossingScene({ handoff }: { handoff: MotionValue<number> }) {
   const rushView = useRef<HTMLDivElement>(null)
   // The parallax plane holding the train, which the rush cuts the glass out of.
   const trainPlane = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: track, offset: ['start start', 'end end'] })
+  const scrollYProgress = useTrackProgress(track, trackScreens)
   const zoom = useTransform(scrollYProgress, [zoomStart, 1], [0, 1])
   const camera = useSceneCamera(zoom, rushView, crossingShot)
   const calm = useReducedMotion() === true
@@ -89,6 +91,7 @@ export function CrossingScene({ handoff }: { handoff: MotionValue<number> }) {
     view,
     plane: trainPlane,
     track,
+    screens: trackScreens,
     progress: scrollYProgress,
     handoff,
     calm,
@@ -167,16 +170,20 @@ export function CrossingScene({ handoff }: { handoff: MotionValue<number> }) {
       {/*
        * Tall scroll track. The view is fixed rather than sticky, so it stays
        * put through the hand-off whatever the exact scroll position (a sticky
-       * view slides with the page as soon as it scrolls past the end).
+       * view slides with the page as soon as it scrolls past the end). It is
+       * `--view-h` tall, as are every scene's views (`scene-kit/screen.ts`):
+       * a phone's toolbar collapses on scrolling down, and a view the height
+       * of the viewport with it showing then left a blank strip below it.
        */}
       <section
         ref={track}
         aria-label="Seaside railway crossing"
-        className="relative z-10 h-[500svh]"
+        className="relative z-10"
+        style={{ height: `calc(var(--screen) * ${trackScreens})` }}
       >
         <motion.div
           ref={view}
-          className="fixed top-0 h-svh w-full overflow-hidden"
+          className="fixed top-0 h-(--view-h) w-full overflow-hidden"
           style={
             {
               backgroundColor: backdrop,

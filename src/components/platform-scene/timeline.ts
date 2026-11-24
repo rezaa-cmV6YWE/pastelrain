@@ -5,8 +5,8 @@ import { projects } from './projects'
 
 /*
  * The platform scene's scroll timeline. As in the train scene, moments are
- * laid out in screens of scroll (1 = 100svh) from the scene's start, then
- * exported as fractions of the section's scroll distance for `useScroll`.
+ * laid out in screens of scroll (1 = one `--screen`) from the scene's start, then
+ * exported as fractions of the section's scroll distance (`useTrackProgress`).
  * It starts once the train's rush through the window has handed over
  * (`scene-kit/handoff.ts`), facing the station-name board. After a moment to
  * settle the phone comes up, its feed scrolls with the page, one

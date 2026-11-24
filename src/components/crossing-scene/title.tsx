@@ -11,7 +11,8 @@ export const title = 'Re:'
  * overscan). The narration reuses it so captions appear exactly where the
  * title was; `titleLine` is the matching line box height.
  */
-export const titleSpot = 'top-[calc(10svh+3rem)] portrait:top-[calc(16svh+3rem)]'
+export const titleSpot =
+  'top-[calc(var(--screen)*0.1+3rem)] portrait:top-[calc(var(--screen)*0.16+3rem)]'
 export const titleLine = 'h-[clamp(3rem,9vw,8rem)] text-[clamp(3rem,9vw,8rem)]'
 
 const centreOut = stagger(0.14, { from: 'center', startDelay: 0.5 })

@@ -40,6 +40,17 @@ body {
 }
 
 /*
+ * One screen of scroll and layout, and the height of the scenes' fixed
+ * views; `useStableScreen` (`scene-kit/screen.ts`) sets both in px so they
+ * keep still as a phone's toolbar collapses. Use them instead of viewport
+ * units in scene layout.
+ */
+:root {
+  --screen: 100svh;
+  --view-h: 100lvh;
+}
+
+/*
  * Scrolling is held (`lenis.stop()`) during the opening camera move and the
  * rush into the train window. Lenis holds it with `overflow: clip`, which
  * removes a classic (always-shown) scrollbar and widens the page mid-motion.
@@ -69,6 +80,62 @@ body {
 /* HTML text cut from paper: the scene's rough-edge filter plus its shadow */
 .pr-cut-text {
   filter: url(#pr-cut) drop-shadow(-3px 4px 2px rgb(13 40 80 / 0.28));
+}
+
+/*
+ * Safari (WebKit) draws these filters in software, again whenever the
+ * filtered art repaints, and a zooming camera repaints it every frame at its
+ * new scale: the crossing's zoom ran at 3–6 fps in WebKit (iPhone viewport,
+ * M2) and the rushes at 2–3 fps. A lone drop-shadow on an element with its
+ * own layer is drawn by Core Animation instead, so in WebKit the paper art
+ * and the book's paper (the empty `.pr-cut-text` backgrounds) get layers,
+ * and the cut text keeps only its shadow: the `#pr-cut` displacement is
+ * software-only. Text gets no layer: it measured no faster with one.
+ * Scoped to WebKit (`-apple-system-body` is WebKit-only): in Chromium a
+ * will-change layer zoomed stays drawn at its largest scale (see
+ * `ParallaxLayer`).
+ */
+@supports (font: -apple-system-body) {
+  .pr-paper,
+  .pr-cut-text:empty {
+    will-change: transform;
+  }
+
+  .pr-cut-text {
+    filter: drop-shadow(-3px 4px 2px rgb(13 40 80 / 0.28));
+  }
+}
+
+/*
+ * iOS (every browser there is WebKit): no paper shadows at all. Either way
+ * of drawing them costs memory iOS doesn't have: the layers above doubled
+ * the layer memory (the reverse rush out of the train window peaked at
+ * ~1.2 GB of layers against ~0.45 GB without, in WebKit at iPhone size),
+ * and in software the shadows of the art zoomed into the rush needed huge
+ * buffers. Both crashed the page on an iPhone 15 ("A problem repeatedly
+ * occurred") during the rush.
+ *
+ * The platform's walking strips (`.pr-walk`, wider than the screen) get no
+ * will-change layer there either: with it, fast scrolling back up from the
+ * beach crashed an iPhone 15 in the train → platform rush every time, and
+ * the phone, the walk and the gate zoom each started with a ~470 ms frame;
+ * without it the same runs finished at 54–58 fps, worst frame ~70 ms.
+ */
+@supports (-webkit-touch-callout: none) {
+  .pr-paper,
+  .pr-cut-text:empty {
+    will-change: auto;
+  }
+
+  .pr-paper,
+  .pr-cut-text {
+    filter: none;
+  }
+
+  /* over the inline `will-change` the walk sets (`platform-scene/strip.tsx`) */
+  .pr-walk {
+    will-change: auto !important;
+  }
 }
 
 /*

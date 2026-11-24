@@ -5,7 +5,6 @@ import {
   useMotionValue,
   useMotionValueEvent,
   useReducedMotion,
-  useScroll,
   useTransform,
   type MotionStyle,
   type MotionValue,
@@ -18,6 +17,7 @@ import { glassFade } from '#/components/scene-kit/handoff'
 import { palette } from '#/components/scene-kit/palette'
 import { ParallaxLayer, usePointerParallax } from '#/components/scene-kit/parallax'
 import { useRush } from '#/components/scene-kit/rush'
+import { useTrackProgress } from '#/components/scene-kit/track'
 
 import { Book } from './book'
 import { Carriage, Stanchions, Straps, SunPatches } from './carriage'
@@ -83,7 +83,7 @@ export function TrainScene({
   // The arrival rush's transform wraps the scroll camera, which measures in
   // it, so a resize mid-rush re-frames correctly (as in the crossing).
   const rushView = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: track, offset: ['start start', 'end end'] })
+  const scrollYProgress = useTrackProgress(track, trackScreens)
   const zoom = useTransform(scrollYProgress, zoomSpan, [0, 1])
   const camera = useSceneCamera(zoom, rushView, windowShot)
   const calm = useReducedMotion() === true
@@ -96,6 +96,7 @@ export function TrainScene({
   const rushCamera = useRush({
     view,
     track,
+    screens: trackScreens,
     progress: scrollYProgress,
     value: arrival,
     calm,
@@ -137,7 +138,7 @@ export function TrainScene({
   // come (`usePullInDistance`, shorter on narrow screens); it stays near 1.5–2
   // on real screens, and is kept within 1.2–3 so the curve always brakes.
   // Set on mount too, so a restored scroll position is right.
-  const distance = usePullInDistance()
+  const distance = usePullInDistance(view)
   const pullInLocal = useTransform(() => {
     const [v, z, d] = [scrollYProgress.get(), camera.z.get(), distance.get()]
     const t = Math.min(1, Math.max(0, (v - pullInSpan[0]) / (pullInSpan[1] - pullInSpan[0])))
@@ -202,8 +203,8 @@ export function TrainScene({
       <section
         ref={track}
         aria-label="Inside the train"
-        className="relative mt-[-100svh]"
-        style={{ height: `${trackScreens * 100}svh` }}
+        className="relative mt-[calc(var(--screen)*-1)]"
+        style={{ height: `calc(var(--screen) * ${trackScreens})` }}
       >
         <h2 className="sr-only">About me</h2>
         <article className="sr-only">
@@ -232,7 +233,7 @@ export function TrainScene({
          */}
         <motion.div
           aria-hidden
-          className="pointer-events-none fixed top-0 h-svh w-full overflow-hidden"
+          className="pointer-events-none fixed top-0 h-(--view-h) w-full overflow-hidden"
           style={
             { backgroundColor: palette.cloud, visibility: shown, '--pr-play': play } as MotionStyle
           }
@@ -252,7 +253,7 @@ export function TrainScene({
         </motion.div>
         <motion.div
           ref={view}
-          className="fixed top-0 z-5 h-svh w-full overflow-hidden"
+          className="fixed top-0 z-5 h-(--view-h) w-full overflow-hidden"
           style={
             { visibility: shown, '--pr-play': play, '--pr-paper-blur': paperBlur } as MotionStyle
           }

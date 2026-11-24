@@ -29,6 +29,7 @@ export function useWindowRush({
   view,
   plane,
   track,
+  screens,
   progress,
   handoff,
   calm,
@@ -36,6 +37,7 @@ export function useWindowRush({
   view: RefObject<HTMLElement | null>
   plane: RefObject<HTMLElement | null>
   track: RefObject<HTMLElement | null>
+  screens: number
   progress: MotionValue<number>
   handoff: MotionValue<number>
   calm: boolean
@@ -97,6 +99,7 @@ export function useWindowRush({
   const camera = useRush({
     view,
     track,
+    screens,
     progress,
     value: handoff,
     calm,

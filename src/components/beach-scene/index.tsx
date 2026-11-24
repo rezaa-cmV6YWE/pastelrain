@@ -3,7 +3,6 @@ import {
   motion,
   MotionConfig,
   useMotionValueEvent,
-  useScroll,
   type MotionValue,
   type Variants,
 } from 'motion/react'
@@ -12,6 +11,7 @@ import { useEffect, useId, useRef, useState, type CSSProperties } from 'react'
 import { cinematic } from '#/components/scene-kit/ease'
 import { palette } from '#/components/scene-kit/palette'
 import { RevealText } from '#/components/scene-kit/reveal-text'
+import { trackScrollY, useTrackProgress } from '#/components/scene-kit/track'
 
 import { contacts } from './contacts'
 import { closingStart, contactsStart, trackScreens } from './timeline'
@@ -40,7 +40,7 @@ function Contacts({ shown, onFocus }: { shown: boolean; onFocus: () => void }) {
   return (
     <motion.nav
       aria-labelledby={id}
-      className="fixed right-[max(1.25rem,3vw)] bottom-[max(1.25rem,3svh)] z-10 flex flex-col items-end gap-3 text-(--fg)"
+      className="fixed right-[max(1.25rem,3vw)] bottom-[max(1.25rem,calc(var(--screen)*0.03))] z-10 flex flex-col items-end gap-3 text-(--fg)"
       style={{ '--fg': palette.foam, '--ink': palette.navy } as CSSProperties}
       initial={false}
       animate={shown ? 'shown' : 'hidden'}
@@ -101,7 +101,7 @@ function Contacts({ shown, onFocus }: { shown: boolean; onFocus: () => void }) {
 function Closing({ shown }: { shown: boolean }) {
   return (
     <div
-      className="pointer-events-none fixed inset-x-0 top-[34svh] z-10 flex flex-col items-center gap-[0.6em] px-4 text-center portrait:top-[40svh]"
+      className="pointer-events-none fixed inset-x-0 top-[calc(var(--screen)*0.34)] z-10 flex flex-col items-center gap-[0.6em] px-4 text-center portrait:top-[calc(var(--screen)*0.4)]"
       style={{ color: palette.foam }}
     >
       <RevealText
@@ -127,7 +127,7 @@ function Closing({ shown }: { shown: boolean }) {
  */
 export function BeachScene({ shore }: { shore: MotionValue<number> }) {
   const track = useRef<HTMLElement>(null)
-  const { scrollYProgress } = useScroll({ target: track, offset: ['start start', 'end end'] })
+  const scrollYProgress = useTrackProgress(track, trackScreens)
   useMotionValueEvent(scrollYProgress, 'change', (v) => shore.set(v))
   // a restored scroll; `shore`'s change event then sets `shown`
   useEffect(() => shore.set(scrollYProgress.get()), [shore, scrollYProgress])
@@ -143,7 +143,9 @@ export function BeachScene({ shore }: { shore: MotionValue<number> }) {
   const scrollToEnd = () => {
     const el = track.current
     if (!el) return
-    const y = el.getBoundingClientRect().top + window.scrollY + el.offsetHeight - window.innerHeight
+    // clamped by the browser: with a phone's toolbar hidden the page ends
+    // a toolbar's height short of it
+    const y = trackScrollY(el, trackScreens, 1)
     if (lenis) lenis.scrollTo(y, { duration: 1 })
     else window.scrollTo({ top: y })
   }
@@ -154,8 +156,8 @@ export function BeachScene({ shore }: { shore: MotionValue<number> }) {
       <section
         ref={track}
         aria-label="Beach at night"
-        className="relative mt-[-100svh]"
-        style={{ height: `${trackScreens * 100}svh` }}
+        className="relative mt-[calc(var(--screen)*-1)]"
+        style={{ height: `calc(var(--screen) * ${trackScreens})` }}
       >
         <Closing shown={closing} />
         <Contacts shown={shown} onFocus={scrollToEnd} />

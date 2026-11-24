@@ -9,6 +9,7 @@ import {
 import { useEffect, type RefObject } from 'react'
 
 import { rush } from './handoff'
+import { trackScrollY } from './track'
 
 /** The target's box in the view, before the rush transform. */
 type Aim = { x: number; y: number; w: number; h: number; vw: number; vh: number }
@@ -37,6 +38,7 @@ const coverMargin = 1.1
 export function useRush({
   view,
   track,
+  screens,
   progress,
   value,
   calm,
@@ -47,7 +49,9 @@ export function useRush({
   view: RefObject<HTMLElement | null>
   /** The scene's scroll section; the rush plays at its end. */
   track: RefObject<HTMLElement | null>
-  /** That section's `scrollYProgress`. */
+  /** Its length in screens (`./track`). */
+  screens: number
+  /** That section's progress (`useTrackProgress`). */
   progress: MotionValue<number>
   /** The hand-off value it animates 0 ↔ 1. */
   value: MotionValue<number>
@@ -93,9 +97,10 @@ export function useRush({
       })
       onMeasure?.()
     }
+    // where progress reaches 1 (`./track`)
     const endY = () => {
       const el = track.current
-      return el ? el.getBoundingClientRect().bottom + window.scrollY - window.innerHeight : 0
+      return el ? trackScrollY(el, screens, 1) : 0
     }
 
     let playing: AnimationPlaybackControls | null = null
@@ -114,7 +119,9 @@ export function useRush({
       if (playing) return
       // How far past the end the page is, in screens: small when scrolled
       // there, large after a jump (which sets the state without the show).
-      const past = (window.scrollY - endY()) / window.innerHeight
+      const el = track.current
+      const screen = el ? el.offsetHeight / screens : window.innerHeight
+      const past = (window.scrollY - endY()) / screen
       if (p >= 1 && value.get() < 1) {
         if (past > 0.5) value.set(1)
         else play(1)
@@ -138,7 +145,7 @@ export function useRush({
       playing?.stop()
       if (playing) lenis?.start()
     }
-  }, [view, track, progress, value, calm, target, onMeasure, lenis, aim, x, y, z])
+  }, [view, track, screens, progress, value, calm, target, onMeasure, lenis, aim, x, y, z])
 
   return { x, y, z }
 }

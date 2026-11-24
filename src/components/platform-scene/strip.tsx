@@ -12,7 +12,8 @@ type Extent = { x0: number; width: number }
  * once it zooms: as their own layers the strips slide without the paper art
  * being redrawn, but Chromium keeps a will-change layer drawn at the
  * largest scale it has been zoomed to, so they must not keep it through
- * the zoom (they don't move then anyway).
+ * the zoom (they don't move then anyway). On iOS (`.pr-walk` in
+ * `src/styles.css`) they never get it.
  */
 export type Walk = { at: MotionValue<number>; willChange: MotionValue<'transform' | 'auto'> }
 
@@ -37,7 +38,7 @@ export function Strip({
   return (
     <SceneHtml>
       <motion.div
-        className="absolute top-0 h-full"
+        className="pr-walk absolute top-0 h-full"
         style={{ left: `${x0 / 16}%`, width: `${width / 16}%`, x, willChange: walk.willChange }}
       >
         <StripContext value={{ x0, width }}>{children}</StripContext>

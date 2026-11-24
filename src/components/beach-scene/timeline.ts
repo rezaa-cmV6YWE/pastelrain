@@ -1,5 +1,5 @@
 /*
- * The beach scene's scroll timeline, in screens (1 = 100svh) as in the other
+ * The beach scene's scroll timeline, in screens (1 = one `--screen`) as in the other
  * scenes. It starts where the platform's scroll ends, with the gate's opening
  * filling the screen. The camera (the platform view's, `platform-scene`) first
  * pushes on past the gate into the sea, then pulls back to 1× as dusk turns to

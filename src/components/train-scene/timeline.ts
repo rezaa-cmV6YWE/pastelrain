@@ -3,8 +3,8 @@ import { pages } from './story'
 
 /*
  * The train scene's scroll timeline. Moments are laid out in screens of
- * scroll (1 = 100svh) from the scene's start, then exported as fractions of
- * the section's scroll distance for `useScroll`. Ranges are [start, end].
+ * scroll (1 = one `--screen`) from the scene's start, then exported as fractions of
+ * the section's scroll distance (`useTrackProgress`). Ranges are [start, end].
  * The section's height follows from the total (`trackScreens`), so changing
  * a length here (or adding a page) keeps every other part's pace. It starts
  * once the crossing's rush into the window has handed over

@@ -3,7 +3,6 @@ import {
   motion,
   MotionConfig,
   useMotionValueEvent,
-  useScroll,
   useTransform,
   type MotionStyle,
   type MotionValue,
@@ -22,6 +21,7 @@ import { CameraMarks, useSceneCamera, usePaperBlur, type Shot } from '#/componen
 import { skyReveal } from '#/components/scene-kit/handoff'
 import { palette } from '#/components/scene-kit/palette'
 import { ParallaxLayer, usePointerParallax } from '#/components/scene-kit/parallax'
+import { trackScrollY, useTrackProgress } from '#/components/scene-kit/track'
 
 import { PlatformForeground } from './foreground'
 import { usePullInDistance } from './layout'
@@ -71,7 +71,7 @@ export function PlatformScene({
 }) {
   const track = useRef<HTMLElement>(null)
   const view = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: track, offset: ['start start', 'end end'] })
+  const scrollYProgress = useTrackProgress(track, trackScreens)
   const gate = useTransform(scrollYProgress, gateZoom, [0, 1])
   // Past the gate: on into the sea, then back out to 1× over the beach.
   const beyond = useTransform(
@@ -84,7 +84,7 @@ export function PlatformScene({
     return Math.max(0, g + b)
   })
   const camera = useSceneCamera(zoom, view, gateShot)
-  const distance = usePullInDistance()
+  const distance = usePullInDistance(view)
   const walk: Walk = {
     // The pull-in: `pullIn` is the share of the way in (the train scene
     // eases it so it brakes with the train's scenery); the strips move
@@ -149,8 +149,7 @@ export function PlatformScene({
   const scrollTo = (v: number) => {
     const el = track.current
     if (!el) return
-    const y =
-      el.getBoundingClientRect().top + window.scrollY + v * (el.offsetHeight - window.innerHeight)
+    const y = trackScrollY(el, trackScreens, v)
     if (lenis) lenis.scrollTo(y, { duration: 1 })
     else window.scrollTo({ top: y })
   }
@@ -166,13 +165,13 @@ export function PlatformScene({
       <section
         ref={track}
         aria-label="Station platform at dusk"
-        className="relative mt-[-100svh]"
-        style={{ height: `${trackScreens * 100}svh` }}
+        className="relative mt-[calc(var(--screen)*-1)]"
+        style={{ height: `calc(var(--screen) * ${trackScreens})` }}
       >
         <h2 className="sr-only">Projects</h2>
         <motion.div
           ref={view}
-          className="fixed top-0 h-svh w-full overflow-clip"
+          className="fixed top-0 h-(--view-h) w-full overflow-clip"
           style={
             {
               backgroundColor: backdrop,

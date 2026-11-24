@@ -2,7 +2,6 @@ import { motion, useTransform, type MotionStyle, type MotionValue } from 'motion
 import type { CSSProperties } from 'react'
 
 import { mixOklab } from '#/components/scene-kit/color'
-import { Drifting } from '#/components/scene-kit/drifting'
 import { palette } from '#/components/scene-kit/palette'
 import { Circle, Path, Rect } from '#/components/scene-kit/rough'
 
@@ -98,10 +97,13 @@ function Streak({ d }: { d: string }) {
  * Dusk over the sea, seen above the station roof and through the ticket
  * gate: the sky fading from night blue to the glow at the horizon, the
  * setting sun half under the sea, its path on the water, the first stars and
- * a few thin clouds. The twinkles are a separate, unfiltered SVG, so the
- * filtered paper doesn't repaint as they glint. `night` (0 → 1, the beach
- * scene) darkens the sky, sea and sand, sinks the sun, fades the clouds and
- * its path on the sea, and brings out the stars.
+ * a few thin clouds. The clouds hold still: drifting, the two strip-wide
+ * cloud layers added ~300 MB of layer memory (WebKit at iPhone size), and
+ * iOS killed the page when scrolled fast into the platform. The twinkles
+ * are a separate, unfiltered SVG, so the filtered paper doesn't repaint as
+ * they glint. `night` (0 → 1, the beach scene) darkens the sky, sea and
+ * sand, sinks the sun, fades the clouds and its path on the sea, and brings
+ * out the stars.
  */
 export function DuskSky({ walk, night }: { walk: Walk; night: MotionValue<number> }) {
   const top = useTransform(night, toNight.top)
@@ -146,27 +148,14 @@ export function DuskSky({ walk, night }: { walk: Walk; night: MotionValue<number
         </StripSvg>
       </motion.div>
       <motion.div className="absolute inset-0" style={{ opacity: cloudFade }}>
-        <Drifting drift="calc(var(--u) * 24)" duration="120s" delay="0s">
-          <StripSvg>
-            {streaks
-              .filter((_, i) => i % 2 === 0)
-              .map((d) => (
-                <Streak key={d} d={d} />
-              ))}
-          </StripSvg>
-        </Drifting>
-        <Drifting drift="calc(var(--u) * 32)" duration="100s" delay="-40s">
-          <StripSvg>
-            {streaks
-              .filter((_, i) => i % 2 === 1)
-              .map((d) => (
-                <Streak key={d} d={d} />
-              ))}
-            <Streak
-              d={`M${sunX - 140} 404 C${sunX - 100} 392 ${sunX - 10} 386 ${sunX + 50} 390 C${sunX + 80} 393 ${sunX + 96} 398 ${sunX + 100} 404 C${sunX + 40} 412 ${sunX - 80} 412 ${sunX - 140} 404 Z`}
-            />
-          </StripSvg>
-        </Drifting>
+        <StripSvg>
+          {streaks.map((d) => (
+            <Streak key={d} d={d} />
+          ))}
+          <Streak
+            d={`M${sunX - 140} 404 C${sunX - 100} 392 ${sunX - 10} 386 ${sunX + 50} 390 C${sunX + 80} 393 ${sunX + 96} 398 ${sunX + 100} 404 C${sunX + 40} 412 ${sunX - 80} 412 ${sunX - 140} 404 Z`}
+          />
+        </StripSvg>
       </motion.div>
       <StripSvg paper={false}>
         {stars.map(([cx, cy, r], i) => (

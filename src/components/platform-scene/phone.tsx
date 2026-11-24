@@ -24,7 +24,7 @@ const papers = [palette.paper, palette.flyerBlue, palette.flyerPink, palette.fly
  * than about 88% of it. Its contents scale with it (`--p`, 1/360 of its
  * width), which keeps a card's title at 18px or more on a 360×740 phone.
  */
-const phoneHeight = 'min(88svh, 190vw)'
+const phoneHeight = 'min(calc(var(--screen) * 0.88), 190vw)'
 
 /**
  * Held like the book: at rest it is pushed down a quarter of its height

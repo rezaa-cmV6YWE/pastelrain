@@ -51,7 +51,7 @@ function place(v: number) {
  * of the book is below the screen edge (see `Book`).
  */
 const pageText =
-  'relative flex h-3/4 flex-col overflow-hidden p-[7%] font-title text-[clamp(0.72rem,1.9svh,1.15rem)] leading-relaxed'
+  'relative flex h-3/4 flex-col overflow-hidden p-[7%] font-title text-[clamp(0.72rem,calc(var(--screen)*0.019),1.15rem)] leading-relaxed'
 const ink = { color: palette.navy }
 
 /** A sheet of paper: the rough-cut background is a sibling, so the text is never filtered. */
@@ -246,7 +246,7 @@ export function Book({ progress }: { progress: MotionValue<number> }) {
        * left page shows at the left; at most by a page, on wide tablets.
        */}
       <motion.div
-        className="portrait:[translate:calc(min(48vw-50%,50%)*var(--open))_0]` (tailwindcss suggestCanonicalClasses) relative aspect-[1.5] w-[min(90vw,1240px,140svh)] perspective-[1800px] portrait:aspect-[0.6] portrait:w-[min(78vw,480px,64svh)] landscape:[translate:calc(-25%*(1-var(--open)))_0] [@media(max-height:500px)]:w-[min(90vw,170svh)]"
+        className="relative aspect-[1.5] w-[min(90vw,1240px,calc(var(--screen)*1.4))] perspective-[1800px] portrait:aspect-[0.6] portrait:w-[min(78vw,480px,calc(var(--screen)*0.64))] portrait:[translate:calc(min(48vw-50%,50%)*var(--open))_0] landscape:[translate:calc(-25%*(1-var(--open)))_0] [@media(max-height:500px)]:w-[min(90vw,calc(var(--screen)*1.7))]"
         style={{ '--open': open } as MotionStyle}
       >
         {/* page stack */}
@@ -282,7 +282,9 @@ export function Book({ progress }: { progress: MotionValue<number> }) {
                 className="relative flex h-3/4 flex-col items-center justify-center gap-[0.5em] font-title"
                 style={{ color: palette.foam }}
               >
-                <p className="m-0 text-[clamp(2rem,6svh,4rem)] leading-none font-semibold">Re:</p>
+                <p className="m-0 text-[clamp(2rem,calc(var(--screen)*0.06),4rem)] leading-none font-semibold">
+                  Re:
+                </p>
                 <p className="m-0 text-sm tracking-[0.2em]">a short story</p>
               </div>
             </>

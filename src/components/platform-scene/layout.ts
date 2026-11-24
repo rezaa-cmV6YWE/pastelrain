@@ -1,5 +1,5 @@
 import { useMotionValue, type MotionValue } from 'motion/react'
-import { useEffect } from 'react'
+import { useEffect, type RefObject } from 'react'
 
 /*
  * Where things stand along the platform, in viewBox units. The platform is
@@ -29,20 +29,26 @@ export const wallEnd = gateX + 1100
  * parallax overscan) starts off-screen to the left of the frame. The stage
  * is a bottom-centred cover mapping (`SceneSvg`), so a narrow screen sees
  * less around x 800 and the platform needs less of a run-up; a shorter
- * pull-in brakes more gently (`train-scene/index.tsx`). Measured on the
- * client, so SSR renders the widest case.
+ * pull-in brakes more gently (`train-scene/index.tsx`). Measured from
+ * `view`, the calling scene's full-screen view, on the client, so SSR
+ * renders the widest case. Not from the window: its height changes as a
+ * phone's toolbar collapses and expands, which moved the platform mid
+ * pull-in; the views are `--view-h` tall (`scene-kit/screen.ts`).
  */
-export function usePullInDistance(): MotionValue<number> {
+export function usePullInDistance(view: RefObject<HTMLElement | null>): MotionValue<number> {
   const distance = useMotionValue(wallEnd + 100)
   useEffect(() => {
+    const el = view.current
+    if (!el) return
     const measure = () => {
-      const [w, h] = [window.innerWidth, window.innerHeight]
+      const [w, h] = [el.clientWidth, el.clientHeight]
       const scale = Math.max(w / 1600, h / 900)
       distance.set(wallEnd + 100 - (800 - w / 2 / scale))
     }
     measure()
-    window.addEventListener('resize', measure)
-    return () => window.removeEventListener('resize', measure)
-  }, [distance])
+    const observer = new ResizeObserver(measure)
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [view, distance])
   return distance
 }

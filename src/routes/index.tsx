@@ -5,6 +5,7 @@ import { BeachScene } from '#/components/beach-scene'
 import { CrossingScene } from '#/components/crossing-scene'
 import { PlatformScene } from '#/components/platform-scene'
 import { PaperGrain, SceneDefs } from '#/components/scene-kit/scene-svg'
+import { useStableScreen } from '#/components/scene-kit/screen'
 import { TrainScene } from '#/components/train-scene'
 
 export const Route = createFileRoute('/')({ component: Home })
@@ -20,6 +21,7 @@ function Home() {
   const arrival = useMotionValue(0)
   const pullIn = useMotionValue(0)
   const shore = useMotionValue(0)
+  useStableScreen()
   return (
     <main>
       <SceneDefs />

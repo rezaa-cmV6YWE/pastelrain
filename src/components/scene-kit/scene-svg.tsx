@@ -96,11 +96,13 @@ export function SceneDefs() {
 
 /**
  * Paper texture over the whole page, rendered once (in `src/routes/index.tsx`)
- * above both scenes, so nothing swaps grain at the hand-off.
+ * above both scenes, so nothing swaps grain at the hand-off. `--view-h` tall
+ * like the views rather than `inset-0`, which follows a phone's toolbar:
+ * every resize redrew the full-screen noise filter.
  */
 export function PaperGrain() {
   return (
-    <div className="pointer-events-none fixed inset-0 z-20 opacity-[0.16] mix-blend-multiply">
+    <div className="pointer-events-none fixed top-0 left-0 z-20 h-(--view-h) w-full opacity-[0.16] mix-blend-multiply">
       <svg className="absolute inset-0 size-full" aria-hidden="true">
         <rect width="100%" height="100%" filter="url(#pr-grain)" />
       </svg>
