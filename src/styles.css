@@ -372,6 +372,60 @@ body {
   }
 }
 
+/*
+ * The résumé link (`beach-scene/resume-link.tsx`): a warm glint sweeps
+ * across its label (the gradient clipped to the text), then rests; small
+ * stars twinkle around it, each on its own delay.
+ */
+.pr-shine {
+  background-image: linear-gradient(
+    100deg,
+    var(--shine-base) 38%,
+    var(--shine) 46%,
+    var(--shine-base) 50%,
+    var(--shine) 54%,
+    var(--shine-base) 62%
+  );
+  background-size: 250% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: pr-shine 4.5s ease-in-out infinite;
+  animation-play-state: var(--pr-play, running);
+}
+
+@keyframes pr-shine {
+  0% {
+    background-position: 100% 0;
+  }
+  40%,
+  100% {
+    background-position: 0 0;
+  }
+}
+
+.pr-sparkle {
+  animation: pr-sparkle 2.8s ease-in-out infinite backwards;
+  animation-play-state: var(--pr-play, running);
+}
+
+@keyframes pr-sparkle {
+  0% {
+    transform: scale(0) rotate(0deg);
+    opacity: 0;
+  }
+  50%,
+  100% {
+    transform: scale(0) rotate(90deg);
+    opacity: 0;
+  }
+  25% {
+    transform: scale(1) rotate(45deg);
+    opacity: 1;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .pr-drift {
     animation: none;
@@ -400,5 +454,15 @@ body {
   .pr-flash {
     animation: none;
     opacity: 0.3;
+  }
+
+  .pr-shine {
+    animation: none;
+  }
+
+  .pr-sparkle {
+    animation: none;
+    transform: scale(0.7);
+    opacity: 0.8;
   }
 }

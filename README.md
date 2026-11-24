@@ -67,6 +67,7 @@ Content lives in plain data files:
 - Work history: `stops` in `src/components/train-scene/stations.tsx`
 - Projects: `src/components/platform-scene/projects.ts`, with screenshots in `./images/`
 - Contacts: `src/components/beach-scene/contacts.ts`
+- Résumé: `public/resume.pdf` (served at `/resume.pdf`; replace the file to update it)
 
 Each scene's scroll length follows from its timeline, so adding a page, stop or project keeps the pace of everything else.
 
