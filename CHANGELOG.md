@@ -1,3 +1,9 @@
+## [1.1.0](https://github.com/rezaa-cmV6YWE/pastelrain/compare/v1.0.0...v1.1.0) (2026-11-24)
+
+### Features
+
+* add a résumé download under the closing line ([0a97697](https://github.com/rezaa-cmV6YWE/pastelrain/commit/0a976979e6394f5e4784db48ce1238e58e72eab7))
+
 ## 1.0.0 (2026-11-24)
 
 ### Features
