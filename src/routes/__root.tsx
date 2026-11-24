@@ -20,11 +20,14 @@ const imageAlt =
   'A paper-cut seaside railway crossing under a summer sky, with the title “Re:” over the clouds.'
 
 export const Route = createRootRoute({
-  head: () => ({
+  // `_notFound` (router-core's only flag for it): no route matched, so the
+  // root shows the not-found page
+  head: ({ match: { _notFound: lost } }) => ({
     meta: [
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { title },
+      { title: lost ? 'Not on this line · Re:' : title },
+      ...(lost ? [{ name: 'robots', content: 'noindex' }] : []),
       { name: 'description', content: description },
       { name: 'author', content: 'Rezaa' },
       { name: 'theme-color', content: palette.sky },

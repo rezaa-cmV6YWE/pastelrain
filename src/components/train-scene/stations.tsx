@@ -38,7 +38,16 @@ export const stops = [
   },
 ] as const
 
-type Stop = (typeof stops)[number]
+/** What a station name board shows; `code` goes in its station-number badge. */
+export type Sign = {
+  code: string
+  kana: string
+  name: string
+  role: string
+  dates: string
+  prev: readonly [string, string]
+  next: readonly [string, string]
+}
 
 /** The middle window's centre, where each sign comes to rest. */
 const windowCentre = 800
@@ -53,7 +62,11 @@ function Pipe(props: { x: number; y: number; width: number; height: number; rx?:
   )
 }
 
-function StationSign({ cx, stop }: { cx: number; stop: Stop }) {
+/**
+ * A station name board on its platform, centred on `cx`. Also the not-found
+ * and error pages' board (`halt-scene`).
+ */
+export function StationSign({ cx, stop }: { cx: number; stop: Sign }) {
   const [prevKana, prevName] = stop.prev
   const [nextKana, nextName] = stop.next
   return (
