@@ -147,7 +147,7 @@ pnpm format:check        # oxfmt --check
 
 ## Runtime/Tooling Preferences
 
-- **Package manager:** pnpm only (v11; `pnpm-lock.yaml`). There is no `packageManager` or `engines` field. `pnpm-workspace.yaml` is a single package that only sets `allowBuilds` (esbuild, lightningcss, sharp, workerd).
+- **Package manager:** pnpm only (`pnpm-lock.yaml`). `package.json` pins it with `packageManager` (`pnpm@12.23.0`, exact: Workers Builds runs it through Corepack, which rejects ranges) and Node with `engines.node`. Workers Builds ignores `engines.node` and reads Node's version from `.node-version` (26.13.1), so keep the two in step. `pnpm-workspace.yaml` is a single package that only sets `allowBuilds` (esbuild, lightningcss, sharp, workerd).
 - **Runtime:** Node for tooling; Cloudflare `workerd` for the server. There is no Bun.
 - **Pinned versions:** `@tanstack/react-start` 1.169.4, `@tanstack/react-router` 1.170.46, and the devtools packages are pinned exactly. Upgrade them together.
 - **Core versions:** Vite 8, TypeScript 6, Tailwind 4, React 19, Wrangler 4.
