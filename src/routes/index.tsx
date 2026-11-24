@@ -1,7 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useMotionValue } from 'motion/react'
 
+import { useMilestone } from '#/analytics'
 import { BeachScene } from '#/components/beach-scene'
+import { contactsStart, throughSpan } from '#/components/beach-scene/timeline'
 import { CrossingScene } from '#/components/crossing-scene'
 import { PlatformScene } from '#/components/platform-scene'
 import { PaperGrain, SceneDefs } from '#/components/scene-kit/scene-svg'
@@ -22,6 +24,12 @@ function Home() {
   const pullIn = useMotionValue(0)
   const shore = useMotionValue(0)
   useStableScreen()
+  // how far visitors get: inside the train, on the platform, at the beach
+  // (once its planes replace the platform's), at the contacts
+  useMilestone('reach-train', handoff, 1)
+  useMilestone('reach-platform', arrival, 1)
+  useMilestone('reach-beach', shore, throughSpan[1])
+  useMilestone('reach-contacts', shore, contactsStart)
   return (
     <main>
       <SceneDefs />

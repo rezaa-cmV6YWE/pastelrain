@@ -136,6 +136,10 @@ export function ProjectPage({
                   href={link.href}
                   target="_blank"
                   rel="noopener noreferrer"
+                  data-umami-event="project-link"
+                  data-umami-event-project={project.title}
+                  data-umami-event-link={link.label}
+                  data-umami-event-from="page"
                   className="inline-flex items-center gap-[calc(var(--p)*5)] rounded-sm px-[calc(var(--p)*14)] py-[calc(var(--p)*8)] font-sans text-[length:calc(var(--p)*15)] font-bold no-underline transition-[translate] hover:-translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2"
                   style={{
                     backgroundColor: palette.stripe,

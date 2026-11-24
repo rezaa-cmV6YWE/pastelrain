@@ -112,6 +112,10 @@ function Card({
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
+            data-umami-event="project-link"
+            data-umami-event-project={project.title}
+            data-umami-event-link={link.label}
+            data-umami-event-from="card"
             onFocus={onFocus}
             className="inline-flex items-center gap-[calc(var(--p)*5)] rounded-sm px-[calc(var(--p)*11)] py-[calc(var(--p)*6)] font-sans text-[length:calc(var(--p)*14)] font-bold no-underline transition-[translate] hover:-translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2"
             style={{
@@ -128,6 +132,8 @@ function Card({
           <button
             type="button"
             onClick={onMore}
+            data-umami-event="project-more"
+            data-umami-event-project={project.title}
             onFocus={onFocus}
             aria-label={`More about ${project.title}`}
             className="cursor-pointer rounded-sm [border-width:calc(var(--p)*2)] border-solid bg-transparent px-[calc(var(--p)*11)] py-[calc(var(--p)*6)] font-sans text-[length:calc(var(--p)*14)] font-bold focus-visible:outline-2 focus-visible:outline-offset-2"
