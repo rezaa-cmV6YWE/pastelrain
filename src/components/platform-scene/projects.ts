@@ -6,7 +6,7 @@
  * (`timeline.ts`).
  *
  * Screenshots go in `./images/` and are imported, so Vite fingerprints them
- * (there is no `public/` directory):
+ * (`public/` is only for files that need a fixed root URL, the favicons):
  *   import shot from './images/x.webp'
  *   image: { src: shot, alt: '…' }
  * A card without an image shows a small seaside vignette.
