@@ -14,6 +14,7 @@ import { RevealText } from '#/components/scene-kit/reveal-text'
 import { trackScrollY, useTrackProgress } from '#/components/scene-kit/track'
 
 import { contacts } from './contacts'
+import { ResumeLink } from './resume-link'
 import { closingStart, contactsStart, trackScreens } from './timeline'
 
 const reveal: Variants = {
@@ -98,9 +99,9 @@ function Contacts({ shown, onFocus }: { shown: boolean; onFocus: () => void }) {
 /**
  * The closing line, centred in the night sky between the fireworks and the
  * horizon, revealed like the opening title and the captions (`RevealText`),
- * its second line a beat later.
+ * its second line a beat later, then the résumé link under it.
  */
-function Closing({ shown }: { shown: boolean }) {
+function Closing({ shown, onFocus }: { shown: boolean; onFocus: () => void }) {
   return (
     <div
       className="pointer-events-none fixed inset-x-0 top-[calc(var(--screen)*0.34)] z-10 flex flex-col items-center gap-[0.6em] px-4 text-center portrait:top-[calc(var(--screen)*0.4)]"
@@ -117,6 +118,7 @@ function Closing({ shown }: { shown: boolean }) {
         delay={1.2}
         className="pr-cut-text m-0 font-title text-[clamp(0.9rem,2vw,1.5rem)] leading-snug font-medium"
       />
+      <ResumeLink shown={shown} onFocus={onFocus} />
     </div>
   )
 }
@@ -161,7 +163,7 @@ export function BeachScene({ shore }: { shore: MotionValue<number> }) {
         className="relative mt-[calc(var(--screen)*-1)]"
         style={{ height: `calc(var(--screen) * ${trackScreens})` }}
       >
-        <Closing shown={closing} />
+        <Closing shown={closing} onFocus={scrollToEnd} />
         <Contacts shown={shown} onFocus={scrollToEnd} />
       </section>
     </MotionConfig>
