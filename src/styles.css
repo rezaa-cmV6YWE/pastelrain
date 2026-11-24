@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@import 'lenis/dist/lenis.css';
 @import '@fontsource/shippori-mincho/500.css';
 @import '@fontsource/shippori-mincho/600.css';
 @import '@fontsource/shippori-mincho/700.css';
@@ -36,4 +37,368 @@ body,
 
 body {
   margin: 0;
+}
+
+/*
+ * One screen of scroll and layout, and the height of the scenes' fixed
+ * views; `useStableScreen` (`scene-kit/screen.ts`) sets both in px so they
+ * keep still as a phone's toolbar collapses. Use them instead of viewport
+ * units in scene layout.
+ */
+:root {
+  --screen: 100svh;
+  --view-h: 100lvh;
+}
+
+/*
+ * Scrolling is held (`lenis.stop()`) during the opening camera move and the
+ * rush into the train window. Lenis holds it with `overflow: clip`, which
+ * removes a classic (always-shown) scrollbar and widens the page mid-motion.
+ * With a mouse, hold it with `overflow: hidden` in a reserved gutter instead,
+ * so the width never changes; touch devices keep Lenis's `clip`.
+ */
+@media (pointer: fine) {
+  html {
+    scrollbar-gutter: stable;
+  }
+
+  html.lenis:not(.lenis-autoToggle).lenis-stopped {
+    overflow: hidden;
+  }
+}
+
+/*
+ * The paper's drop shadow. Its blur is `--pr-paper-blur` (2px), which a view
+ * sets to 0 while its camera zooms (`usePaperBlur` in
+ * `scene-kit/camera.tsx`): a zooming layer is redrawn at every new scale,
+ * and the blur made each redraw cost more than a frame.
+ */
+.pr-paper {
+  filter: drop-shadow(-3px 4px var(--pr-paper-blur, 2px) rgb(13 40 80 / 0.28));
+}
+
+/* HTML text cut from paper: the scene's rough-edge filter plus its shadow */
+.pr-cut-text {
+  filter: url(#pr-cut) drop-shadow(-3px 4px 2px rgb(13 40 80 / 0.28));
+}
+
+/*
+ * Safari (WebKit) draws these filters in software, again whenever the
+ * filtered art repaints, and a zooming camera repaints it every frame at its
+ * new scale: the crossing's zoom ran at 3–6 fps in WebKit (iPhone viewport,
+ * M2) and the rushes at 2–3 fps. A lone drop-shadow on an element with its
+ * own layer is drawn by Core Animation instead, so in WebKit the paper art
+ * and the book's paper (the empty `.pr-cut-text` backgrounds) get layers,
+ * and the cut text keeps only its shadow: the `#pr-cut` displacement is
+ * software-only. Text gets no layer: it measured no faster with one.
+ * Scoped to WebKit (`-apple-system-body` is WebKit-only): in Chromium a
+ * will-change layer zoomed stays drawn at its largest scale (see
+ * `ParallaxLayer`).
+ */
+@supports (font: -apple-system-body) {
+  .pr-paper,
+  .pr-cut-text:empty {
+    will-change: transform;
+  }
+
+  .pr-cut-text {
+    filter: drop-shadow(-3px 4px 2px rgb(13 40 80 / 0.28));
+  }
+}
+
+/*
+ * iOS (every browser there is WebKit): no paper shadows at all. Either way
+ * of drawing them costs memory iOS doesn't have: the layers above doubled
+ * the layer memory (the reverse rush out of the train window peaked at
+ * ~1.2 GB of layers against ~0.45 GB without, in WebKit at iPhone size),
+ * and in software the shadows of the art zoomed into the rush needed huge
+ * buffers. Both crashed the page on an iPhone 15 ("A problem repeatedly
+ * occurred") during the rush.
+ *
+ * The platform's walking strips (`.pr-walk`, wider than the screen) get no
+ * will-change layer there either: with it, fast scrolling back up from the
+ * beach crashed an iPhone 15 in the train → platform rush every time, and
+ * the phone, the walk and the gate zoom each started with a ~470 ms frame;
+ * without it the same runs finished at 54–58 fps, worst frame ~70 ms.
+ */
+@supports (-webkit-touch-callout: none) {
+  .pr-paper,
+  .pr-cut-text:empty {
+    will-change: auto;
+  }
+
+  .pr-paper,
+  .pr-cut-text {
+    filter: none;
+  }
+
+  /* over the inline `will-change` the walk sets (`platform-scene/strip.tsx`) */
+  .pr-walk {
+    will-change: auto !important;
+  }
+}
+
+/*
+ * Scene animations. Each scene's view sets `--pr-play` to `paused` while it
+ * is hidden, so an off-screen scene does no animation work.
+ */
+.pr-drift {
+  animation: pr-drift var(--drift-duration, 90s) ease-in-out infinite alternate;
+  animation-delay: var(--drift-delay, 0s);
+  animation-play-state: var(--pr-play, running);
+}
+
+@keyframes pr-drift {
+  from {
+    transform: translateX(calc(var(--drift) * -1));
+  }
+  to {
+    transform: translateX(var(--drift));
+  }
+}
+
+.pr-glint {
+  animation: pr-glint var(--glint-duration, 4s) ease-in-out infinite;
+  animation-delay: var(--glint-delay, 0s);
+  animation-play-state: var(--pr-play, running);
+  opacity: 0;
+}
+
+@keyframes pr-glint {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.pr-lamp-a,
+.pr-lamp-b {
+  animation: pr-blink 1s steps(1, end) infinite;
+  animation-play-state: var(--pr-play, running);
+}
+
+.pr-lamp-b {
+  animation-delay: -0.5s;
+}
+
+@keyframes pr-blink {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* the carriage's rattle; `--rattle` (0–1) is the train's speed */
+.pr-rattle {
+  animation: pr-rattle 1.4s ease-in-out infinite;
+  animation-play-state: var(--pr-play, running);
+}
+
+@keyframes pr-rattle {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(calc(1.5px * var(--rattle, 1)));
+  }
+  60% {
+    transform: translateY(calc(-0.5px * var(--rattle, 1)));
+  }
+}
+
+.pr-sway {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: pr-sway 2.4s ease-in-out infinite alternate;
+  animation-delay: var(--sway-delay, 0s);
+  animation-play-state: var(--pr-play, running);
+}
+
+@keyframes pr-sway {
+  from {
+    transform: rotate(-3deg);
+  }
+  to {
+    transform: rotate(3deg);
+  }
+}
+
+/* a platform lamp's failing tube */
+.pr-flicker {
+  animation: pr-flicker 5s steps(1, end) infinite;
+  animation-play-state: var(--pr-play, running);
+}
+
+@keyframes pr-flicker {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  62% {
+    opacity: 0.55;
+  }
+  64% {
+    opacity: 1;
+  }
+  66% {
+    opacity: 0.4;
+  }
+  69% {
+    opacity: 1;
+  }
+}
+
+/* the vending machine's backlight */
+.pr-hum {
+  animation: pr-hum 3.2s ease-in-out infinite alternate;
+  animation-play-state: var(--pr-play, running);
+}
+
+@keyframes pr-hum {
+  from {
+    opacity: 0.75;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* the beach's foam washing in and out */
+.pr-wash {
+  animation: pr-wash 5s ease-in-out infinite alternate;
+  animation-play-state: var(--pr-play, running);
+}
+
+@keyframes pr-wash {
+  from {
+    transform: translateX(-18px);
+    opacity: 0.45;
+  }
+  to {
+    transform: translateX(18px);
+    opacity: 0.8;
+  }
+}
+
+/* fireworks: a rocket rises to the burst, the burst opens and droops as it fades */
+.pr-rocket,
+.pr-burst,
+.pr-flash {
+  animation-duration: var(--burst-duration, 4.8s);
+  animation-delay: var(--burst-delay, 0s);
+  animation-iteration-count: infinite;
+  animation-fill-mode: backwards;
+  animation-play-state: var(--pr-play, running);
+}
+
+.pr-rocket {
+  animation-name: pr-rocket;
+}
+
+@keyframes pr-rocket {
+  0% {
+    transform: translateY(var(--rise));
+    opacity: 0;
+    animation-timing-function: cubic-bezier(0.2, 0.6, 0.4, 1);
+  }
+  2% {
+    opacity: 1;
+  }
+  18% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  20%,
+  100% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+}
+
+.pr-burst {
+  animation-name: pr-burst;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+@keyframes pr-burst {
+  0%,
+  18% {
+    transform: scale(0.1);
+    opacity: 0;
+  }
+  19% {
+    transform: scale(0.2);
+    opacity: 1;
+    animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  55% {
+    transform: scale(1.03) translateY(4px);
+    opacity: 1;
+  }
+  80%,
+  100% {
+    transform: scale(1.08) translateY(14px);
+    opacity: 0;
+  }
+}
+
+.pr-flash {
+  animation-name: pr-flash;
+  opacity: 0;
+}
+
+@keyframes pr-flash {
+  0%,
+  18% {
+    opacity: 0;
+  }
+  22% {
+    opacity: 0.55;
+  }
+  60%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pr-drift {
+    animation: none;
+  }
+
+  .pr-rattle,
+  .pr-sway,
+  .pr-flicker,
+  .pr-hum {
+    animation: none;
+  }
+
+  .pr-wash {
+    animation: none;
+  }
+
+  .pr-rocket {
+    display: none;
+  }
+
+  .pr-burst {
+    animation: none;
+    opacity: 1;
+  }
+
+  .pr-flash {
+    animation: none;
+    opacity: 0.3;
+  }
 }
