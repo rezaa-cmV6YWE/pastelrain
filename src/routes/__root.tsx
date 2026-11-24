@@ -54,6 +54,10 @@ export const Route = createRootRoute({
     links: [
       { rel: 'stylesheet', href: appCss },
       { rel: 'canonical', href: `${site}/` },
+      // `public/`; the .ico is for browsers without SVG icons (sizes keeps others on the SVG)
+      { rel: 'icon', href: '/favicon.ico', sizes: '32x32' },
+      { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
+      { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
     ],
     // Umami (`#/analytics`), production only
     scripts: import.meta.env.DEV
