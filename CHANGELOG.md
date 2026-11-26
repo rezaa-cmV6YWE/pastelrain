@@ -1,3 +1,9 @@
+## [1.2.0](https://github.com/rezaa-cmV6YWE/pastelrain/compare/v1.1.0...v1.2.0) (2026-11-26)
+
+### Features
+
+* **seo:** name the owner, add JSON-LD, sitemap and robots ([30842e0](https://github.com/rezaa-cmV6YWE/pastelrain/commit/30842e067d53d6f6d5f76fa88385342d8d78d001))
+
 ## [1.1.0](https://github.com/rezaa-cmV6YWE/pastelrain/compare/v1.0.0...v1.1.0) (2026-11-24)
 
 ### Features
