@@ -11,11 +11,11 @@ import { palette } from '../components/scene-kit/palette'
 import appCss from '../styles.css?url'
 
 /** The deployed origin; social cards need absolute URLs. */
-const site = 'https://pastelrain.com'
-const title = 'Re: software developer'
-const description =
-  'A train ride along the coast, from noon to the last fireworks: Rezaa, a software developer who builds the quiet things on your screen.'
-const image = new URL(ogImage, site).href
+export const site = 'https://pastelrain.com'
+export const title = 'Rezaa · Software developer · Re:'
+export const description =
+  'Rezaa is a software developer in Indonesia building web and mobile apps with React, TypeScript and TanStack. Scroll through it as a train ride along the coast.'
+export const image = new URL(ogImage, site).href
 const imageAlt =
   'A paper-cut seaside railway crossing under a summer sky, with the title “Re:” over the clouds.'
 
@@ -27,7 +27,7 @@ export const Route = createRootRoute({
       { charSet: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },
       { title: lost ? 'Not on this line · Re:' : title },
-      ...(lost ? [{ name: 'robots', content: 'noindex' }] : []),
+      { name: 'robots', content: lost ? 'noindex' : 'max-image-preview:large' },
       { name: 'description', content: description },
       { name: 'author', content: 'Rezaa' },
       { name: 'theme-color', content: palette.sky },

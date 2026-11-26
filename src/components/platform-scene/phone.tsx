@@ -67,10 +67,13 @@ function Card({
         style={{ backgroundColor: palette.sky }}
       >
         {project.image ? (
+          // low priority: React's SSR otherwise hoists a <head> preload for
+          // every card image, competing with first paint
           <img
             src={project.image.src}
             alt={project.image.alt}
             decoding="async"
+            fetchPriority="low"
             className="size-full object-cover"
           />
         ) : (

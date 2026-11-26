@@ -5,6 +5,8 @@ import { cinematic } from '#/components/scene-kit/ease'
 import { palette } from '#/components/scene-kit/palette'
 
 export const title = 'Re:'
+/** The heading's text for screen readers and crawlers; the visible word stays `title`. */
+const heading = 'Re: Rezaa, software developer'
 
 /**
  * Where the title sits, inside its parallax layer (hence `+3rem`: the layer's
@@ -72,7 +74,7 @@ export function Title({ show }: { show: boolean }) {
       )}
       style={{ color: palette.navy }}
     >
-      <span className="sr-only">{title}</span>
+      <span className="sr-only">{heading}</span>
       <motion.span
         aria-hidden="true"
         initial="hidden"
